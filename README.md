@@ -136,12 +136,26 @@ Uploads are all-or-nothing: if the second file is missing or rejected, the first
 is deleted and no account is created, so there are never orphaned files or
 half-made applications.
 
+#### Changing account type later
+
+The account page carries an **Account type** card, so this is not a one-shot
+decision at sign-up:
+
+- A customer can attach the two documents and apply. As at sign-up this files
+  an application - it never grants the role directly - and they keep shopping
+  as a customer while it is reviewed.
+- A pending application can be **withdrawn**, which deletes the row and the
+  uploaded documents.
+- A rejected applicant sees the reviewer note and can apply again.
+- An approved doctor can **step back down** to a customer account, and apply
+  again later.
+
+Admins do not see the card, and the endpoints reject them: their role belongs
+under **Admin -> Users**, and letting an admin demote themselves here would
+sidestep the guard that keeps at least one admin in place.
+
 #### Not built
 
-- **Applying after sign-up.** The application is only offered during
-  registration, so a customer who later qualifies — or one who was rejected and
-  wants to resubmit — has no self-service route. An admin can set the role
-  directly in the meantime.
 - **Doctor sign-up through the mobile API.** `POST /api/auth/register` still
   creates plain customers; it takes a JSON body and would need multipart
   handling for the documents.
@@ -367,7 +381,8 @@ expose (`page_styles` too, for stylesheets):
 | File                       | Loaded by                              |
 | -------------------------- | -------------------------------------- |
 | `assets/js/shop.js`        | `Shop::index`, `::category`, `::product` - background add-to-cart |
-| `assets/js/register.js`    | `Auth::register` - account-type toggle and document previews |
+| `assets/js/register.js`    | `Auth::register` - account-type toggle |
+| `assets/js/document-upload.js` | `Auth::register`, `Account::index` - chosen-file previews |
 | `assets/js/admin-documents.js` | `Admin\Doctors::view` - Fancybox lightbox |
 
 Pages that need no behaviour - sign-in, cart, checkout, the account pages,

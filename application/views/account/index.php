@@ -75,34 +75,115 @@
 			</div>
 		</div>
 
-		<?php if ($application): ?>
+		<?php
+		// Admins manage their own role under Admin -> Users; offering it here
+		// would let one demote themselves past the last-admin guard.
+		$pending  = $application && $application['status'] === 'pending';
+		$rejected = $application && $application['status'] === 'rejected';
+		?>
+		<?php if ($user['role'] !== 'admin'): ?>
 			<div class="card shadow-sm">
-				<div class="card-header bg-white fw-semibold">Doctor application</div>
+				<div class="card-header bg-white fw-semibold">Account type</div>
 				<div class="card-body small">
-					<?php if ($application['status'] === 'pending'): ?>
-						<span class="badge bg-warning text-dark">under review</span>
-						<p class="mb-0 mt-2 text-muted">
+
+					<?php if ($user['role'] === 'doctor'): ?>
+						<span class="badge bg-info">doctor</span>
+						<p class="text-muted mt-2">
+							Your documents were approved
+							<?= $application && $application['reviewed_at']
+								? 'on ' . date('j M Y', strtotime($application['reviewed_at'])) : '' ?>.
+						</p>
+
+						<?= form_open('account/leave_doctor', array(
+							'onsubmit' => "return confirm('Go back to a customer account? You would need to apply again, with your documents, to be a doctor.')",
+						)) ?>
+							<button class="btn btn-sm btn-outline-secondary" type="submit">
+								Switch back to a customer account
+							</button>
+						<?= form_close() ?>
+
+					<?php elseif ($pending): ?>
+						<span class="badge bg-warning text-dark">doctor application under review</span>
+						<p class="text-muted mt-2">
 							An admin is checking your documents. Your account works as a
 							customer in the meantime, so you can shop as normal.
 						</p>
-					<?php elseif ($application['status'] === 'approved'): ?>
-						<span class="badge bg-success">approved</span>
-						<p class="mb-0 mt-2 text-muted">
-							Approved on <?= date('j M Y', strtotime($application['reviewed_at'])) ?>.
-						</p>
+
+						<?= form_open('account/withdraw_application', array(
+							'onsubmit' => "return confirm('Withdraw the application? Your uploaded documents are deleted.')",
+						)) ?>
+							<button class="btn btn-sm btn-outline-danger" type="submit">Withdraw application</button>
+						<?= form_close() ?>
+
 					<?php else: ?>
-						<span class="badge bg-secondary">not approved</span>
-						<p class="mb-0 mt-2 text-muted">
-							Your application was not approved. Your account continues to work
-							as a customer.
-						</p>
-						<?php if ($application['review_note']): ?>
-							<div class="text-muted mt-2">Note from the reviewer</div>
-							<div><?= nl2br(e($application['review_note'])) ?></div>
+						<span class="badge bg-light text-dark">customer</span>
+
+						<?php if ($rejected): ?>
+							<p class="text-muted mt-2 mb-1">
+								Your last application was not approved. You can submit new documents below.
+							</p>
+							<?php if ($application['review_note']): ?>
+								<div class="text-muted">Note from the reviewer</div>
+								<div class="mb-2"><?= nl2br(e($application['review_note'])) ?></div>
+							<?php endif ?>
+						<?php else: ?>
+							<p class="text-muted mt-2">
+								Are you a doctor? Attach your diploma and graduation certificate and
+								an admin will review them. You carry on shopping as a customer while
+								they do.
+							</p>
 						<?php endif ?>
+
+						<?= form_open_multipart('account/apply_doctor') ?>
+							<?php
+							$documents = array(
+								'diploma'    => 'Diploma',
+								'graduation' => 'Graduation certificate',
+							);
+							$accept = array();
+
+							foreach ($doc_types as $ext)
+							{
+								$accept[] = '.' . $ext;
+							}
+							?>
+							<?php foreach ($documents as $field => $label): ?>
+								<div class="mb-3">
+									<label class="form-label" for="acc_<?= $field ?>"><?= $label ?></label>
+									<input type="file" class="form-control form-control-sm" id="acc_<?= $field ?>"
+										name="<?= $field ?>"
+										accept="<?= e(implode(',', $accept)) ?>,image/*"
+										data-preview="#acc-<?= $field ?>-preview"
+										data-max-kb="<?= (int) $doc_max_kb ?>" required>
+
+									<?php // Filled in by document-upload.js once a file is chosen. ?>
+									<div class="document-preview mt-2" id="acc-<?= $field ?>-preview" hidden>
+										<div class="document-preview-frame position-relative">
+											<img alt="Preview of the <?= strtolower($label) ?> you selected"
+												class="document-preview-img rounded border" data-preview-image hidden>
+											<button type="button" class="btn-close document-preview-clear"
+												data-preview-clear="#acc_<?= $field ?>"
+												aria-label="Remove the selected <?= strtolower($label) ?>"
+												title="Remove"></button>
+										</div>
+										<div class="small mt-1" data-preview-meta></div>
+									</div>
+								</div>
+							<?php endforeach ?>
+
+							<div class="form-text mb-2">
+								<?= e(strtoupper(implode(', ', $doc_types))) ?>, up to
+								<?= (int) round($doc_max_kb / 1024) ?>&nbsp;MB each. Only admins can view these.
+							</div>
+
+							<button class="btn btn-sm btn-dark" type="submit">
+								<?= $rejected ? 'Apply again' : 'Apply to be a doctor' ?>
+							</button>
+						<?= form_close() ?>
 					<?php endif ?>
 				</div>
 			</div>
 		<?php endif ?>
 	</div>
+
 </div>
