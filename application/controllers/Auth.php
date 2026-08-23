@@ -48,6 +48,65 @@ class Auth extends Public_Controller {
 		$this->render('auth/login');
 	}
 
+	/**
+	 * Self-service sign-up.
+	 *
+	 * Always creates a customer - Authentication::register() decides the
+	 * role, so nothing posted here can grant admin rights. Matches the rules
+	 * the mobile API applies at POST /api/auth/register.
+	 */
+	public function register()
+	{
+		if ($this->auth->logged_in())
+		{
+			redirect('shop');
+		}
+
+		$this->data['title'] = 'Create an account';
+
+		if ($this->input->method() === 'post')
+		{
+			$this->form_validation->set_rules('name', 'Name', 'required|trim|min_length[2]|max_length[100]');
+			$this->form_validation->set_rules(
+				'username', 'Username',
+				'required|trim|min_length[3]|max_length[60]|alpha_dash|is_unique[users.username]',
+				array(
+					'is_unique'  => 'That username is already taken.',
+					'alpha_dash' => 'Username may contain only letters, numbers, underscores and dashes.',
+				)
+			);
+			$this->form_validation->set_rules('password', 'Password', 'required|min_length[3]|max_length[72]');
+			$this->form_validation->set_rules(
+				'password_confirm', 'Password confirmation',
+				'required|matches[password]',
+				array('matches' => 'The passwords do not match.')
+			);
+			$this->form_validation->set_rules('phone', 'Phone', 'trim|max_length[30]');
+			$this->form_validation->set_rules('address', 'Address', 'trim');
+
+			if ($this->form_validation->run())
+			{
+				$username = $this->input->post('username', TRUE);
+				$password = $this->input->post('password');
+
+				$this->auth->register(array(
+					'name'     => $this->input->post('name', TRUE),
+					'username' => $username,
+					'password' => $password,
+					'phone'    => $this->input->post('phone', TRUE),
+					'address'  => $this->input->post('address', TRUE),
+				));
+
+				// Sign them straight in so sign-up ends on the storefront.
+				$this->auth->login($username, $password);
+
+				$this->flash_redirect('shop', 'success', 'Your account is ready. Happy shopping!');
+			}
+		}
+
+		$this->render('auth/register');
+	}
+
 	public function logout()
 	{
 		$this->auth->logout();

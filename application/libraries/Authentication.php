@@ -101,6 +101,26 @@ class Authentication {
 		return $user;
 	}
 
+	/**
+	 * Create a customer account.
+	 *
+	 * Shared by the web sign-up form and the mobile API, so the rule that a
+	 * self-registered account is always a customer lives in one place rather
+	 * than being re-applied (or forgotten) by each channel. Nothing the
+	 * caller passes can change the role or the active flag.
+	 *
+	 * @param  array $fields name, username, password (plaintext), phone, address
+	 * @return int   The new user id
+	 */
+	public function register(array $fields)
+	{
+		$fields['password']  = password_hash($fields['password'], PASSWORD_DEFAULT);
+		$fields['role']      = 'customer';
+		$fields['is_active'] = 1;
+
+		return $this->CI->user_model->insert($fields);
+	}
+
 	/** Destroy the identity but keep the session (so flash data survives). */
 	public function logout()
 	{

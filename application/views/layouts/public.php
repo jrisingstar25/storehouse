@@ -62,6 +62,7 @@
 					</li>
 				<?php else: ?>
 					<li class="nav-item"><a class="nav-link" href="<?= site_url('login') ?>">Sign in</a></li>
+					<li class="nav-item"><a class="nav-link" href="<?= site_url('register') ?>">Register</a></li>
 				<?php endif ?>
 			</ul>
 		</div>

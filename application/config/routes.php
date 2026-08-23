@@ -59,10 +59,11 @@ $route['translate_uri_dashes'] = FALSE;
 /* -------------------------------------------------------------------
  * Authentication
  * ---------------------------------------------------------------- */
-// There is no public sign-up: accounts are created by an admin under
-// /admin/users.
-$route['login']  = 'auth/login';
-$route['logout'] = 'auth/logout';
+// Sign-up is open and always creates a customer. Admin accounts are made by
+// an existing admin under /admin/users.
+$route['login']    = 'auth/login';
+$route['logout']   = 'auth/logout';
+$route['register'] = 'auth/register';
 
 /* -------------------------------------------------------------------
  * Storefront

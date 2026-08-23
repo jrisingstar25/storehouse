@@ -21,8 +21,8 @@
 			</div>
 		</div>
 
-		<p class="text-center text-muted small mt-3 mb-0">
-			Accounts are created by an administrator. Contact one if you need access.
+		<p class="text-center text-muted mt-3 mb-0">
+			No account yet? <a href="<?= site_url('register') ?>">Create one</a>.
 		</p>
 	</div>
 </div>

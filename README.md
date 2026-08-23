@@ -33,8 +33,8 @@ dashboard, product CRUD, and a shopping cart with checkout.
    `http://localhost/jinjong/`.
 
 4. Open <http://localhost/jinjong/>. The site opens on the sign-in page - the
-   shop is only visible to signed-in users, and there is no public sign-up, so
-   sign in with a demo account below.
+   shop is only visible to signed-in users, so register or sign in with a demo
+   account below.
 
 ### Demo accounts
 
@@ -64,7 +64,7 @@ Old `index.php/...` links keep working, so existing bookmarks do not break.
 ## What is included
 
 ### Authentication
-Sign in and sign out, with passwords stored as bcrypt hashes
+Sign up, sign in and sign out, with passwords stored as bcrypt hashes
 (`password_hash`) and transparently re-hashed on sign-in when PHP's default cost
 changes. Sessions store only a user id; the account is re-read on every request,
 so deactivating or demoting somebody takes effect immediately. Login failures
@@ -80,8 +80,12 @@ case-insensitive, so `Admin` and `admin` cannot both exist.
 ### Storefront
 **The storefront is private.** Browsing, the cart and checkout all require a
 signed-in account; an anonymous visitor is sent to the sign-in page and
-returned to whatever they asked for once they sign in. There is no public
-sign-up - every account, customer or admin, is created by an admin under
+returned to whatever they asked for once they sign in.
+
+Sign-up is open, on the web at `/register` and in the app at
+`POST /api/auth/register`. Both go through `Authentication::register()`, which
+forces the role to `customer` - so neither channel can create an administrator,
+whatever it posts. Admin accounts are made by an existing admin under
 **Admin -> Users**.
 
 Product catalogue with category filtering, search, sorting and pagination;
@@ -138,9 +142,9 @@ orders; best sellers; and a low-stock list.
   in place and simply uncategorises them.
 - **Orders** — browse, filter, view, change status, delete. Cancelling an order
   returns its items to stock, exactly once.
-- **Users** — create, edit, delete, role and activation control. This is the
-  only way accounts come into existence, for customers and admins alike: set
-  **Role** to *Admin* on the new-user form to create another administrator.
+- **Users** — create, edit, delete, role and activation control. Customers can
+  also sign themselves up; **admin accounts can only be made here**, by setting
+  **Role** to *Admin* on the new-user form.
 
   An admin cannot remove their own admin access or delete their own account,
   and the last admin account cannot be removed. Because the admin performing
@@ -279,7 +283,7 @@ uploads/products/    uploaded product images (not tracked in git)
 Controllers extend one of three base classes in
 `application/core/MY_Controller.php`, which is where access control lives:
 
-- `Public_Controller` — open to everyone; only signing in and out
+- `Public_Controller` — open to everyone; signing in, out and up
 - `Customer_Controller` — requires a signed-in user: the whole storefront,
   cart, checkout and account pages. Adds the cart badge
 - `Admin_Controller` — requires the `admin` role, renders the admin layout

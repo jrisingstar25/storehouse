@@ -20,9 +20,9 @@ class Auth extends API_Controller {
 	/**
 	 * Self-service sign-up for the mobile app.
 	 *
-	 * The role is hard-coded to 'customer'. A caller cannot promote itself by
-	 * posting role=admin, and admin accounts remain something only an existing
-	 * admin can create, in the web back office.
+	 * Authentication::register() forces the role to 'customer', so a caller
+	 * cannot promote itself by posting role=admin. Admin accounts remain
+	 * something only an existing admin can create, in the web back office.
 	 */
 	public function register()
 	{
@@ -60,14 +60,12 @@ class Auth extends API_Controller {
 			),
 		));
 
-		$user_id = $this->user_model->insert(array(
-			'name'      => $data['name'],
-			'username'  => $data['username'],
-			'password'  => password_hash($data['password'], PASSWORD_DEFAULT),
-			'role'      => 'customer',
-			'phone'     => isset($data['phone']) ? $data['phone'] : NULL,
-			'address'   => isset($data['address']) ? $data['address'] : NULL,
-			'is_active' => 1,
+		$user_id = $this->auth->register(array(
+			'name'     => $data['name'],
+			'username' => $data['username'],
+			'password' => $data['password'],
+			'phone'    => isset($data['phone']) ? $data['phone'] : NULL,
+			'address'  => isset($data['address']) ? $data['address'] : NULL,
 		));
 
 		$user  = $this->user_model->get($user_id);
