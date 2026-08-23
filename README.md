@@ -120,6 +120,11 @@ the document in a new tab. Fancybox is loaded only on that page, through the
 Note Fancybox is GPLv3 for open-source use and needs a commercial licence
 otherwise - worth checking before this ships commercially.
 
+Bootstrap, jQuery and Fancybox are served from `assets/vendor/` rather than a
+CDN, so the app has no runtime dependency on an outside host and works with no
+internet access. `assets/vendor/README.md` records the versions and where each
+file came from.
+
 Diplomas are personal records, so they are **not** stored like product images.
 `uploads/doctor_documents/` denies direct HTTP access outright; the only way to
 see a document is `admin/doctors/document/{id}/{diploma|graduation}`, which sits
@@ -346,6 +351,8 @@ application/
 	database/          schema.sql, seed.sql, upgrade-username.sql,
 	                   upgrade-doctor-role.sql
 assets/              css, js and the product-image placeholder
+	vendor/          Bootstrap, jQuery and Fancybox, served locally
+	                 (see assets/vendor/README.md for versions and sources)
 uploads/products/    uploaded product images (not tracked in git)
 uploads/doctor_documents/  applicant diplomas - no direct HTTP access
 ```

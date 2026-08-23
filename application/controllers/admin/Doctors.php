@@ -45,7 +45,8 @@ class Doctors extends Admin_Controller {
 		$this->data['title'] = 'Application from ' . $application['user_name'];
 
 		// Fancybox is only needed on this page, so it is not in the layout.
-		$fancybox = 'https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/';
+		// Served locally - see assets/vendor/README.md.
+		$fancybox = base_url('assets/vendor/fancybox/');
 
 		$this->render('admin/doctors/view', array(
 			'application'  => $application,

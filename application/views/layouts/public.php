@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><?= e($title) ?> &middot; Jinjong</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
 	<link href="<?= base_url('assets/css/app.css') ?>" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -92,8 +92,8 @@ window.JINJONG = {
 	csrfCookie: <?= json_encode(config_item('cookie_prefix') . config_item('csrf_cookie_name')) ?>
 };
 </script>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= base_url('assets/vendor/jquery/jquery.min.js') ?>"></script>
+<script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 <script src="<?= base_url('assets/js/app.js') ?>"></script>
 </body>
 </html>

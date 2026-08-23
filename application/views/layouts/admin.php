@@ -17,7 +17,7 @@ $nav = array(
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><?= e($title) ?> &middot; Jinjong Admin</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
 	<link href="<?= base_url('assets/css/app.css') ?>" rel="stylesheet">
 
 	<?php // Per-page stylesheets, supplied by the controller. ?>
@@ -70,7 +70,7 @@ $nav = array(
 	</div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 
 <?php // Per-page scripts, supplied by the controller. ?>
 <?php foreach ((array) (isset($page_scripts) ? $page_scripts : array()) as $src): ?>
