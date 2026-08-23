@@ -163,5 +163,9 @@ class Admin_Controller extends MY_Controller {
 		}
 
 		$this->data['title'] = 'Admin';
+
+		// Drives the badge on the sidebar Doctors entry.
+		$this->load->model('doctor_application_model');
+		$this->data['pending_doctors'] = $this->doctor_application_model->count_pending();
 	}
 }

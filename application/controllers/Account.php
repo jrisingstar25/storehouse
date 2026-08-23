@@ -6,7 +6,7 @@ class Account extends Customer_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('order_model');
+		$this->load->model(array('order_model', 'doctor_application_model'));
 	}
 
 	/** Profile form: contact details and an optional password change. */
@@ -29,7 +29,7 @@ class Account extends Customer_Controller {
 			if ($this->input->post('new_password') !== '')
 			{
 				$this->form_validation->set_rules('current_password', 'Current password', 'required');
-				$this->form_validation->set_rules('new_password', 'New password', 'required|min_length[8]|max_length[72]');
+				$this->form_validation->set_rules('new_password', 'New password', 'required|min_length[3]|max_length[72]');
 				$this->form_validation->set_rules(
 					'new_password_confirm', 'Password confirmation',
 					'required|matches[new_password]',
@@ -51,7 +51,10 @@ class Account extends Customer_Controller {
 					if ( ! password_verify($this->input->post('current_password'), $user['password']))
 					{
 						$this->data['error'] = 'Your current password is not correct.';
-						$this->render('account/index', array('user' => $user));
+						$this->render('account/index', array(
+							'user'        => $user,
+							'application' => $this->doctor_application_model->latest_for_user($user['id']),
+						));
 						return;
 					}
 
@@ -63,7 +66,10 @@ class Account extends Customer_Controller {
 			}
 		}
 
-		$this->render('account/index', array('user' => $user));
+		$this->render('account/index', array(
+			'user'        => $user,
+			'application' => $this->doctor_application_model->latest_for_user($user['id']),
+		));
 	}
 
 	/** Validation callback: username must be free, ignoring this user's own row. */

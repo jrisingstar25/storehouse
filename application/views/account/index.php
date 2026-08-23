@@ -65,7 +65,7 @@
 	</div>
 
 	<div class="col-lg-4">
-		<div class="card shadow-sm">
+		<div class="card shadow-sm mb-4">
 			<div class="card-body small">
 				<div class="text-muted">Account type</div>
 				<div class="mb-2 text-capitalize"><?= e($user['role']) ?></div>
@@ -74,5 +74,35 @@
 				<div><?= date('j M Y', strtotime($user['created_at'])) ?></div>
 			</div>
 		</div>
+
+		<?php if ($application): ?>
+			<div class="card shadow-sm">
+				<div class="card-header bg-white fw-semibold">Doctor application</div>
+				<div class="card-body small">
+					<?php if ($application['status'] === 'pending'): ?>
+						<span class="badge bg-warning text-dark">under review</span>
+						<p class="mb-0 mt-2 text-muted">
+							An admin is checking your documents. Your account works as a
+							customer in the meantime, so you can shop as normal.
+						</p>
+					<?php elseif ($application['status'] === 'approved'): ?>
+						<span class="badge bg-success">approved</span>
+						<p class="mb-0 mt-2 text-muted">
+							Approved on <?= date('j M Y', strtotime($application['reviewed_at'])) ?>.
+						</p>
+					<?php else: ?>
+						<span class="badge bg-secondary">not approved</span>
+						<p class="mb-0 mt-2 text-muted">
+							Your application was not approved. Your account continues to work
+							as a customer.
+						</p>
+						<?php if ($application['review_note']): ?>
+							<div class="text-muted mt-2">Note from the reviewer</div>
+							<div><?= nl2br(e($application['review_note'])) ?></div>
+						<?php endif ?>
+					<?php endif ?>
+				</div>
+			</div>
+		<?php endif ?>
 	</div>
 </div>

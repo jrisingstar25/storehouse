@@ -8,7 +8,8 @@ class Dashboard extends Admin_Controller {
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model(array('product_model', 'category_model', 'order_model', 'user_model'));
+		$this->load->model(array('product_model', 'category_model', 'order_model', 'user_model',
+			'doctor_application_model'));
 	}
 
 	public function index()
@@ -25,6 +26,8 @@ class Dashboard extends Admin_Controller {
 				'products'   => $this->product_model->count_all_products(),
 				'categories' => $this->category_model->count_all(),
 				'customers'  => $this->user_model->count_by_role('customer'),
+				'doctors'    => $this->user_model->count_by_role('doctor'),
+				'doctor_applications' => $this->doctor_application_model->count_pending(),
 				'low_stock'  => $this->product_model->count_low_stock(self::LOW_STOCK_THRESHOLD),
 			),
 			'recent_orders'  => $this->order_model->recent(8),

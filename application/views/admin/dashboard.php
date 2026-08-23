@@ -5,7 +5,7 @@ $tiles = array(
 	array('label' => 'Revenue',    'value' => money($stats['revenue']),   'note' => 'excluding cancelled', 'url' => 'admin/orders'),
 	array('label' => 'Orders',     'value' => (int) $stats['orders'],     'note' => $stats['pending'] . ' pending', 'url' => 'admin/orders'),
 	array('label' => 'Products',   'value' => (int) $stats['products'],   'note' => $stats['categories'] . ' categories', 'url' => 'admin/products'),
-	array('label' => 'Customers',  'value' => (int) $stats['customers'],  'note' => 'registered accounts', 'url' => 'admin/users'),
+	array('label' => 'Customers',  'value' => (int) $stats['customers'],  'note' => $stats['doctors'] . ' doctors as well', 'url' => 'admin/users'),
 );
 ?>
 
@@ -24,6 +24,13 @@ $tiles = array(
 		</div>
 	<?php endforeach ?>
 </div>
+
+<?php if ($stats['doctor_applications'] > 0): ?>
+	<div class="alert alert-info d-flex justify-content-between align-items-center">
+		<span><strong><?= (int) $stats['doctor_applications'] ?></strong> doctor application(s) waiting to be reviewed.</span>
+		<a class="btn btn-sm btn-outline-dark" href="<?= site_url('admin/doctors?status=pending') ?>">Review now</a>
+	</div>
+<?php endif ?>
 
 <?php if ($stats['low_stock'] > 0): ?>
 	<div class="alert alert-warning d-flex justify-content-between align-items-center">

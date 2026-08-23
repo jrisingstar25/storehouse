@@ -46,7 +46,7 @@ class Auth extends API_Controller {
 			array(
 				'field' => 'password',
 				'label' => 'Password',
-				'rules' => 'required|min_length[8]|max_length[72]',
+				'rules' => 'required|min_length[3]|max_length[72]',
 			),
 			array(
 				'field' => 'phone',

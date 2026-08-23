@@ -49,11 +49,13 @@ class Auth extends Public_Controller {
 	}
 
 	/**
-	 * Self-service sign-up.
+	 * Self-service sign-up, as a customer or as a doctor.
 	 *
-	 * Always creates a customer - Authentication::register() decides the
-	 * role, so nothing posted here can grant admin rights. Matches the rules
-	 * the mobile API applies at POST /api/auth/register.
+	 * Both paths create an ordinary customer account that works immediately -
+	 * Authentication::register() decides the role, so nothing posted here can
+	 * grant admin rights. Choosing "doctor" additionally files an application
+	 * with two uploaded documents; the account only becomes a doctor once an
+	 * admin approves it, and in the meantime the person shops as a customer.
 	 */
 	public function register()
 	{
@@ -63,6 +65,7 @@ class Auth extends Public_Controller {
 		}
 
 		$this->data['title'] = 'Create an account';
+		$applying = $this->input->post('account_type') === 'doctor';
 
 		if ($this->input->method() === 'post')
 		{
@@ -81,15 +84,31 @@ class Auth extends Public_Controller {
 				'required|matches[password]',
 				array('matches' => 'The passwords do not match.')
 			);
+			$this->form_validation->set_rules('account_type', 'Account type', 'required|in_list[customer,doctor]');
 			$this->form_validation->set_rules('phone', 'Phone', 'trim|max_length[30]');
 			$this->form_validation->set_rules('address', 'Address', 'trim');
 
 			if ($this->form_validation->run())
 			{
+				$documents = NULL;
+
+				if ($applying)
+				{
+					// Store the documents before creating anything, so a
+					// rejected upload leaves no half-made account behind.
+					$documents = $this->store_documents();
+
+					if ($documents === FALSE)
+					{
+						$this->render('auth/register');
+						return;
+					}
+				}
+
 				$username = $this->input->post('username', TRUE);
 				$password = $this->input->post('password');
 
-				$this->auth->register(array(
+				$user_id = $this->auth->register(array(
 					'name'     => $this->input->post('name', TRUE),
 					'username' => $username,
 					'password' => $password,
@@ -97,14 +116,50 @@ class Auth extends Public_Controller {
 					'address'  => $this->input->post('address', TRUE),
 				));
 
-				// Sign them straight in so sign-up ends on the storefront.
+				if ($applying)
+				{
+					$this->load->model('doctor_application_model');
+					$this->doctor_application_model->insert(array(
+						'user_id'         => $user_id,
+						'diploma_file'    => $documents['diploma'],
+						'graduation_file' => $documents['graduation'],
+					));
+				}
+
 				$this->auth->login($username, $password);
 
-				$this->flash_redirect('shop', 'success', 'Your account is ready. Happy shopping!');
+				$message = $applying
+					? 'Your account is ready and your doctor application has been submitted. '
+						. 'You can shop as a customer while an admin reviews it.'
+					: 'Your account is ready. Happy shopping!';
+
+				$this->flash_redirect('shop', 'success', $message);
 			}
 		}
 
 		$this->render('auth/register');
+	}
+
+	/**
+	 * Move the two supporting documents into protected storage.
+	 *
+	 * @return array|false {diploma, graduation} filenames, or FALSE with the
+	 *                     reason left in $this->data['error']
+	 */
+	protected function store_documents()
+	{
+		$this->load->library('doctor_documents');
+
+		$result = $this->doctor_documents->store(array('diploma', 'graduation'));
+
+		if ($result === FALSE)
+		{
+			$this->data['error'] = $this->doctor_documents->last_error();
+
+			return FALSE;
+		}
+
+		return $result;
 	}
 
 	public function logout()

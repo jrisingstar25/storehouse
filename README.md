@@ -21,10 +21,11 @@ dashboard, product CRUD, and a shopping cart with checkout.
    The seed step is optional but gives you three categories, nine products and
    the two accounts below.
 
-   Upgrading a database created before accounts moved from email to username?
-   Run `application/database/upgrade-username.sql` instead - read its header
-   first, it explains how existing addresses are converted and where they can
-   collide.
+   Upgrading an existing database? Two one-off scripts live alongside:
+   `upgrade-username.sql` (accounts moved from email to username - read its
+   header, it explains how addresses are converted and where they can collide)
+   and `upgrade-doctor-role.sql` (adds the doctor role and its applications
+   table).
 
 2. **Check the credentials** in `application/config/database.php`. They default
    to the XAMPP standard (`root`, no password, database `jinjong`).
@@ -76,6 +77,57 @@ Accounts are identified by a **username**, not an email address - the system
 stores no email addresses anywhere, on accounts or on orders. Usernames allow
 letters, numbers, underscores and dashes, and the column collation is
 case-insensitive, so `Admin` and `admin` cannot both exist.
+
+### Doctor accounts
+
+`doctor` is a third role alongside `customer` and `admin`. **A doctor has
+exactly the same access as a customer** — the difference is in how the account
+comes about, not what it can do. (No pricing or catalogue difference is wired
+up yet; the role is the hook for that.)
+
+Signing up at `/register` offers a choice of account type. Choosing **Doctor**
+additionally asks for two images — a diploma and a graduation certificate — and
+files an application for review.
+
+What happens then:
+
+1. The account is created as an ordinary **customer**, active immediately. The
+   applicant can browse, add to cart and check out straight away, while the
+   application sits in the queue. Nothing is gated on the outcome.
+2. An admin reviews it under **Admin → Doctors** (the sidebar shows a badge
+   with the number waiting, and the dashboard links to the queue).
+3. **Approve** promotes `users.role` to `doctor`, in a transaction with the
+   application update so the two can never disagree. **Reject** changes nothing
+   about the account — the person carries on as a customer, and sees the
+   reviewer's note on their account page.
+
+A decision is final: a second approve or reject on the same application is
+refused rather than silently re-applied.
+
+Admins can also set the role directly on the user form, without an application.
+
+#### The uploaded documents
+
+Diplomas are personal records, so they are **not** stored like product images.
+`uploads/doctor_documents/` denies direct HTTP access outright; the only way to
+see a document is `admin/doctors/document/{id}/{diploma|graduation}`, which sits
+behind `Admin_Controller` and streams the bytes with `nosniff` and
+`Cache-Control: private, no-store`. Guessing a filename gets a 403, and the
+applicant themself cannot fetch the route.
+
+Uploads are all-or-nothing: if the second file is missing or rejected, the first
+is deleted and no account is created, so there are never orphaned files or
+half-made applications.
+
+#### Not built
+
+- **Applying after sign-up.** The application is only offered during
+  registration, so a customer who later qualifies — or one who was rejected and
+  wants to resubmit — has no self-service route. An admin can set the role
+  directly in the meantime.
+- **Doctor sign-up through the mobile API.** `POST /api/auth/register` still
+  creates plain customers; it takes a JSON body and would need multipart
+  handling for the documents.
 
 ### Storefront
 **The storefront is private.** Browsing, the cart and checkout all require a
@@ -142,6 +194,9 @@ orders; best sellers; and a low-stock list.
   in place and simply uncategorises them.
 - **Orders** — browse, filter, view, change status, delete. Cancelling an order
   returns its items to stock, exactly once.
+- **Doctors** — the review queue for doctor applications: approve (which
+  promotes the account) or reject (which changes nothing). See **Doctor
+  accounts** above.
 - **Users** — create, edit, delete, role and activation control. Customers can
   also sign themselves up; **admin accounts can only be made here**, by setting
   **Role** to *Admin* on the new-user form.
@@ -265,19 +320,22 @@ Worth adding before this is exposed beyond a local network:
 application/
 	config/            routes, database, autoload, app config
 	controllers/       Shop, Cart, Checkout, Auth, Account
-		admin/           Dashboard, Products, Categories, Orders, Users
+		admin/           Dashboard, Products, Categories, Orders, Users, Doctors
 		api/             Auth (mobile API), Fallback
 	core/              MY_Controller (Public/Customer/Admin bases) and
 	                   API_Controller (JSON + bearer tokens)
-	libraries/         Authentication.php (reachable as $this->auth)
-	models/            User, Category, Product, Cart, Order, Api_token
+	libraries/         Authentication.php (as $this->auth), Doctor_documents.php
+	models/            User, Category, Product, Cart, Order, Api_token,
+	                   Doctor_application
 	helpers/           shop_helper.php (money, slugify, escaping, statuses)
 	views/
 		layouts/         public.php, admin.php
 		...
-	database/          schema.sql, seed.sql, upgrade-username.sql
+	database/          schema.sql, seed.sql, upgrade-username.sql,
+	                   upgrade-doctor-role.sql
 assets/              css, js and the product-image placeholder
 uploads/products/    uploaded product images (not tracked in git)
+uploads/doctor_documents/  applicant diplomas - no direct HTTP access
 ```
 
 Controllers extend one of three base classes in

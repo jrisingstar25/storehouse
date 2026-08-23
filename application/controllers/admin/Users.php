@@ -31,7 +31,7 @@ class Users extends Admin_Controller {
 		if ($this->input->method() === 'post')
 		{
 			$this->rules(NULL);
-			$this->form_validation->set_rules('password', 'Password', 'required|min_length[8]|max_length[72]');
+			$this->form_validation->set_rules('password', 'Password', 'required|min_length[3]|max_length[72]');
 
 			if ($this->form_validation->run())
 			{
@@ -70,7 +70,7 @@ class Users extends Admin_Controller {
 			// Blank means "leave the current password alone".
 			if ($this->input->post('password') !== '')
 			{
-				$this->form_validation->set_rules('password', 'Password', 'min_length[8]|max_length[72]');
+				$this->form_validation->set_rules('password', 'Password', 'min_length[3]|max_length[72]');
 			}
 
 			if ($this->form_validation->run())
@@ -172,7 +172,7 @@ class Users extends Admin_Controller {
 			'username', 'Username',
 			'required|trim|min_length[3]|max_length[60]|alpha_dash|callback_unique_username[' . (int) $ignore_id . ']'
 		);
-		$this->form_validation->set_rules('role', 'Role', 'required|in_list[customer,admin]');
+		$this->form_validation->set_rules('role', 'Role', 'required|in_list[customer,doctor,admin]');
 		$this->form_validation->set_rules('phone', 'Phone', 'trim|max_length[30]');
 		$this->form_validation->set_rules('address', 'Address', 'trim');
 	}

@@ -7,6 +7,7 @@ $nav = array(
 	'products'   => array('label' => 'Products',   'url' => 'admin/products'),
 	'categories' => array('label' => 'Categories', 'url' => 'admin/categories'),
 	'orders'     => array('label' => 'Orders',     'url' => 'admin/orders'),
+	'doctors'    => array('label' => 'Doctors',    'url' => 'admin/doctors'),
 	'users'      => array('label' => 'Users',      'url' => 'admin/users'),
 );
 ?>
@@ -45,8 +46,13 @@ $nav = array(
 			<ul class="nav flex-column nav-pills">
 				<?php foreach ($nav as $key => $item): ?>
 					<li class="nav-item">
-						<a class="nav-link <?= $section === $key ? 'active' : 'link-dark' ?>"
-							href="<?= site_url($item['url']) ?>"><?= e($item['label']) ?></a>
+						<a class="nav-link d-flex justify-content-between align-items-center <?= $section === $key ? 'active' : 'link-dark' ?>"
+							href="<?= site_url($item['url']) ?>">
+							<span><?= e($item['label']) ?></span>
+							<?php if ($key === 'doctors' && ! empty($pending_doctors)): ?>
+								<span class="badge rounded-pill bg-warning text-dark"><?= (int) $pending_doctors ?></span>
+							<?php endif ?>
+						</a>
 					</li>
 				<?php endforeach ?>
 			</ul>

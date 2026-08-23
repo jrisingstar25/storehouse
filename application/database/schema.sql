@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 	`name`       VARCHAR(100) NOT NULL,
 	`username`   VARCHAR(60)  NOT NULL,
 	`password`   VARCHAR(255) NOT NULL,
-	`role`       ENUM('customer','admin') NOT NULL DEFAULT 'customer',
+	`role`       ENUM('customer','doctor','admin') NOT NULL DEFAULT 'customer',
 	`phone`      VARCHAR(30)  DEFAULT NULL,
 	`address`    TEXT         DEFAULT NULL,
 	`is_active`  TINYINT(1)   NOT NULL DEFAULT 1,
@@ -128,4 +128,35 @@ CREATE TABLE IF NOT EXISTS `api_tokens` (
 	KEY `api_tokens_user_id` (`user_id`),
 	CONSTRAINT `api_tokens_user_fk` FOREIGN KEY (`user_id`)
 		REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- doctor_applications
+--
+-- A customer applying to be recognised as a doctor. The account itself is
+-- created and usable straight away as a normal customer; users.role only
+-- becomes 'doctor' once an admin approves the application here.
+--
+-- The two uploaded documents are personal records, so they live under
+-- uploads/doctor_documents/, which denies direct HTTP access - they are
+-- served only through admin/doctors/document/... after an auth check.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `doctor_applications` (
+	`id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user_id`          INT UNSIGNED NOT NULL,
+	`diploma_file`     VARCHAR(255) NOT NULL,
+	`graduation_file`  VARCHAR(255) NOT NULL,
+	`status`           ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+	`review_note`      TEXT DEFAULT NULL,
+	`reviewed_by`      INT UNSIGNED DEFAULT NULL,
+	`reviewed_at`      DATETIME DEFAULT NULL,
+	`created_at`       DATETIME NOT NULL,
+	`updated_at`       DATETIME DEFAULT NULL,
+	PRIMARY KEY (`id`),
+	KEY `doctor_apps_user_id` (`user_id`),
+	KEY `doctor_apps_status` (`status`),
+	CONSTRAINT `doctor_apps_user_fk` FOREIGN KEY (`user_id`)
+		REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `doctor_apps_reviewer_fk` FOREIGN KEY (`reviewed_by`)
+		REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

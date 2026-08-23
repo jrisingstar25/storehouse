@@ -42,6 +42,7 @@
 							<?php $role = set_value('role', $editing ? $user['role'] : 'customer') ?>
 							<select class="form-select" id="role" name="role">
 								<option value="customer" <?= $role === 'customer' ? 'selected' : '' ?>>Customer</option>
+								<option value="doctor"   <?= $role === 'doctor'   ? 'selected' : '' ?>>Doctor</option>
 								<option value="admin"    <?= $role === 'admin'    ? 'selected' : '' ?>>Admin</option>
 							</select>
 						</div>

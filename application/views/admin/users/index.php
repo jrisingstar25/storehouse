@@ -17,6 +17,7 @@
 				<select class="form-select form-select-sm" id="role" name="role">
 					<option value="">Any role</option>
 					<option value="customer" <?= $filters['role'] === 'customer' ? 'selected' : '' ?>>Customer</option>
+					<option value="doctor"   <?= $filters['role'] === 'doctor'   ? 'selected' : '' ?>>Doctor</option>
 					<option value="admin"    <?= $filters['role'] === 'admin'    ? 'selected' : '' ?>>Admin</option>
 				</select>
 			</div>
@@ -62,7 +63,8 @@
 							</td>
 							<td class="small"><code><?= e($user['username']) ?></code></td>
 							<td>
-								<span class="badge bg-<?= $user['role'] === 'admin' ? 'dark' : 'light text-dark' ?>">
+								<?php $role_class = array('admin' => 'dark', 'doctor' => 'info'); ?>
+								<span class="badge bg-<?= isset($role_class[$user['role']]) ? $role_class[$user['role']] : 'light text-dark' ?>">
 									<?= e($user['role']) ?>
 								</span>
 							</td>

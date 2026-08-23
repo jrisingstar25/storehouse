@@ -90,6 +90,10 @@ $route['account/orders/(:num)'] = 'account/order/$1';
  * ---------------------------------------------------------------- */
 $route['admin'] = 'admin/dashboard/index';
 
+// Doctor application review. The document route streams a stored file after
+// an auth check - the folder itself refuses direct HTTP access.
+$route['admin/doctors/document/(:num)/(:any)'] = 'admin/doctors/document/$1/$2';
+
 /* -------------------------------------------------------------------
  * Mobile API (controllers live in application/controllers/api/)
  *

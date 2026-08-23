@@ -1,0 +1,4 @@
+# Uploaded personal documents are never source.
+*
+!.gitignore
+!.htaccess
