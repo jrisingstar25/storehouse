@@ -67,6 +67,14 @@ class Auth extends Public_Controller {
 		$this->data['title'] = 'Create an account';
 		$applying = $this->input->post('account_type') === 'doctor';
 
+		// The upload rules come from the library that enforces them, so the
+		// hints and the client-side warnings cannot drift from the real limits.
+		$this->load->library('doctor_documents');
+		$form = array(
+			'doc_max_kb' => Doctor_documents::MAX_SIZE_KB,
+			'doc_types'  => explode('|', Doctor_documents::ALLOWED_TYPES),
+		);
+
 		if ($this->input->method() === 'post')
 		{
 			$this->form_validation->set_rules('name', 'Name', 'required|trim|min_length[2]|max_length[100]');
@@ -100,7 +108,7 @@ class Auth extends Public_Controller {
 
 					if ($documents === FALSE)
 					{
-						$this->render('auth/register');
+						$this->render('auth/register', $form);
 						return;
 					}
 				}
@@ -137,7 +145,7 @@ class Auth extends Public_Controller {
 			}
 		}
 
-		$this->render('auth/register');
+		$this->render('auth/register', $form);
 	}
 
 	/**

@@ -87,7 +87,10 @@ up yet; the role is the hook for that.)
 
 Signing up at `/register` offers a choice of account type. Choosing **Doctor**
 additionally asks for two images — a diploma and a graduation certificate — and
-files an application for review.
+files an application for review. Each file is previewed as soon as it is
+chosen, with its name, size, a close icon to drop it again, and a warning if it
+breaks the type or size rule; those hints are rendered from the same constants
+the server enforces, so they cannot drift.
 
 What happens then:
 

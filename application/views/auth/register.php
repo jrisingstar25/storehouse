@@ -43,17 +43,47 @@ $account_type = set_value('account_type', 'customer');
 			<div class="card shadow-sm mb-4" id="doctor-documents">
 				<div class="card-header bg-white fw-semibold">Supporting documents</div>
 				<div class="card-body">
-					<div class="mb-3">
-						<label class="form-label" for="diploma">Diploma</label>
-						<input type="file" class="form-control" id="diploma" name="diploma" accept="image/*">
+					<div class="row g-3">
+						<?php
+						$documents = array(
+							'diploma'    => 'Diploma',
+							'graduation' => 'Graduation certificate',
+						);
+						$accept = array();
+
+						foreach ($doc_types as $ext)
+						{
+							$accept[] = '.' . $ext;
+						}
+						?>
+						<?php foreach ($documents as $field => $label): ?>
+							<div class="col-sm-6">
+								<label class="form-label" for="<?= $field ?>"><?= $label ?></label>
+								<input type="file" class="form-control" id="<?= $field ?>" name="<?= $field ?>"
+									accept="<?= e(implode(',', $accept)) ?>,image/*"
+									data-preview="#<?= $field ?>-preview"
+									data-max-kb="<?= (int) $doc_max_kb ?>">
+
+								<?php // Filled in by app.js once a file is chosen. ?>
+								<div class="document-preview mt-2" id="<?= $field ?>-preview" hidden>
+									<div class="document-preview-frame position-relative">
+										<img alt="Preview of the <?= strtolower($label) ?> you selected"
+											class="document-preview-img rounded border" data-preview-image hidden>
+										<?php // type=button so it never submits the form. ?>
+										<button type="button" class="btn-close document-preview-clear"
+											data-preview-clear="#<?= $field ?>"
+											aria-label="Remove the selected <?= strtolower($label) ?>"
+											title="Remove"></button>
+									</div>
+									<div class="small mt-1" data-preview-meta></div>
+								</div>
+							</div>
+						<?php endforeach ?>
 					</div>
 
-					<div class="mb-0">
-						<label class="form-label" for="graduation">Graduation certificate</label>
-						<input type="file" class="form-control" id="graduation" name="graduation" accept="image/*">
-						<div class="form-text">
-							JPG, PNG or WebP, up to 4&nbsp;MB each. Only admins can view these.
-						</div>
+					<div class="form-text mt-3">
+						<?= e(strtoupper(implode(', ', $doc_types))) ?>, up to
+						<?= (int) round($doc_max_kb / 1024) ?>&nbsp;MB each. Only admins can view these.
 					</div>
 				</div>
 			</div>
