@@ -36,7 +36,6 @@ class Checkout extends Customer_Controller {
 		if ($this->input->method() === 'post')
 		{
 			$this->form_validation->set_rules('customer_name', 'Name', 'required|trim|max_length[100]');
-			$this->form_validation->set_rules('customer_email', 'Email', 'required|trim|valid_email|max_length[150]');
 			$this->form_validation->set_rules('customer_phone', 'Phone', 'trim|max_length[30]');
 			$this->form_validation->set_rules('shipping_address', 'Shipping address', 'required|trim');
 			$this->form_validation->set_rules('payment_method', 'Payment method', 'required|in_list[cod,bank_transfer]');
@@ -47,7 +46,6 @@ class Checkout extends Customer_Controller {
 				$result = $this->order_model->place(array(
 					'user_id'          => $this->auth->user_id(),
 					'customer_name'    => $this->input->post('customer_name', TRUE),
-					'customer_email'   => $this->input->post('customer_email', TRUE),
 					'customer_phone'   => $this->input->post('customer_phone', TRUE),
 					'shipping_address' => $this->input->post('shipping_address', TRUE),
 					'notes'            => $this->input->post('notes', TRUE),

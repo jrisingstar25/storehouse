@@ -14,8 +14,8 @@
 	<div class="col-lg-4">
 		<div class="card shadow-sm">
 			<div class="card-body small">
-				<div class="text-muted">Email</div>
-				<div class="mb-2"><?= e($user['email']) ?></div>
+				<div class="text-muted">Username</div>
+				<div class="mb-2"><code><?= e($user['username']) ?></code></div>
 
 				<div class="text-muted">Role</div>
 				<div class="mb-2 text-capitalize"><?= e($user['role']) ?></div>

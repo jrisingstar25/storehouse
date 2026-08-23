@@ -21,9 +21,10 @@
 					</div>
 
 					<div class="mb-3">
-						<label class="form-label" for="email">Email</label>
-						<input type="email" class="form-control" id="email" name="email"
-							value="<?= set_value('email', $editing ? $user['email'] : '') ?>" required>
+						<label class="form-label" for="username">Username</label>
+						<input type="text" class="form-control" id="username" name="username"
+							value="<?= set_value('username', $editing ? $user['username'] : '') ?>" required>
+						<div class="form-text">Letters, numbers, underscores and dashes. This is what they sign in with.</div>
 					</div>
 
 					<div class="mb-3">

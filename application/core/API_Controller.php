@@ -194,7 +194,7 @@ class API_Controller extends CI_Controller {
 		return array(
 			'id'      => (int) $user['id'],
 			'name'    => $user['name'],
-			'email'   => $user['email'],
+			'username' => $user['username'],
 			'role'    => $user['role'],
 			'phone'   => $user['phone'],
 			'address' => $user['address'],

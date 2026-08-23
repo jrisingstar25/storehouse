@@ -17,9 +17,9 @@
 						</div>
 
 						<div class="col-sm-6 mb-3">
-							<label class="form-label" for="email">Email</label>
-							<input type="email" class="form-control" id="email" name="email"
-								value="<?= set_value('email', $user['email']) ?>" required>
+							<label class="form-label" for="username">Username</label>
+							<input type="text" class="form-control" id="username" name="username"
+								value="<?= set_value('username', $user['username']) ?>" required>
 						</div>
 					</div>
 

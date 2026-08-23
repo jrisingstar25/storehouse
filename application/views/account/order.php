@@ -57,11 +57,10 @@
 					<?= nl2br(e($order['shipping_address'])) ?>
 				</div>
 
-				<div class="text-muted">Contact</div>
-				<div class="mb-2">
-					<?= e($order['customer_email']) ?>
-					<?php if ($order['customer_phone']): ?><br><?= e($order['customer_phone']) ?><?php endif ?>
-				</div>
+				<?php if ($order['customer_phone']): ?>
+					<div class="text-muted">Contact</div>
+					<div class="mb-2"><?= e($order['customer_phone']) ?></div>
+				<?php endif ?>
 
 				<div class="text-muted">Payment</div>
 				<div class="mb-2"><?= $order['payment_method'] === 'cod' ? 'Cash on delivery' : 'Bank transfer' ?></div>

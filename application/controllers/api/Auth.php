@@ -35,10 +35,13 @@ class Auth extends API_Controller {
 				'rules' => 'required|trim|min_length[2]|max_length[100]',
 			),
 			array(
-				'field' => 'email',
-				'label' => 'Email',
-				'rules' => 'required|trim|valid_email|max_length[150]|is_unique[users.email]',
-				'errors' => array('is_unique' => 'An account with that email already exists.'),
+				'field' => 'username',
+				'label' => 'Username',
+				'rules' => 'required|trim|min_length[3]|max_length[60]|alpha_dash|is_unique[users.username]',
+				'errors' => array(
+					'is_unique'  => 'That username is already taken.',
+					'alpha_dash' => 'Username may contain only letters, numbers, underscores and dashes.',
+				),
 			),
 			array(
 				'field' => 'password',
@@ -59,7 +62,7 @@ class Auth extends API_Controller {
 
 		$user_id = $this->user_model->insert(array(
 			'name'      => $data['name'],
-			'email'     => $data['email'],
+			'username'  => $data['username'],
 			'password'  => password_hash($data['password'], PASSWORD_DEFAULT),
 			'role'      => 'customer',
 			'phone'     => isset($data['phone']) ? $data['phone'] : NULL,
@@ -82,15 +85,15 @@ class Auth extends API_Controller {
 		$this->require_method('POST');
 
 		$data = $this->validate(array(
-			array('field' => 'email',    'label' => 'Email',    'rules' => 'required|trim|valid_email'),
+			array('field' => 'username', 'label' => 'Username', 'rules' => 'required|trim'),
 			array('field' => 'password', 'label' => 'Password', 'rules' => 'required'),
 		));
 
-		$user = $this->auth->verify($data['email'], $data['password']);
+		$user = $this->auth->verify($data['username'], $data['password']);
 
 		if ( ! $user)
 		{
-			// One message for wrong password, unknown address and disabled
+			// One message for wrong password, unknown username and disabled
 			// account alike - the API must not confirm who has an account.
 			$this->fail('Those credentials do not match our records.', 401);
 		}

@@ -21,6 +21,11 @@ dashboard, product CRUD, and a shopping cart with checkout.
    The seed step is optional but gives you three categories, nine products and
    the two accounts below.
 
+   Upgrading a database created before accounts moved from email to username?
+   Run `application/database/upgrade-username.sql` instead - read its header
+   first, it explains how existing addresses are converted and where they can
+   collide.
+
 2. **Check the credentials** in `application/config/database.php`. They default
    to the XAMPP standard (`root`, no password, database `jinjong`).
 
@@ -33,10 +38,10 @@ dashboard, product CRUD, and a shopping cart with checkout.
 
 ### Demo accounts
 
-| Role     | Email                   | Password      |
-| -------- | ----------------------- | ------------- |
-| Admin    | `admin@jinjong.test`    | `admin123`    |
-| Customer | `customer@jinjong.test` | `customer123` |
+| Role     | Username   | Password      |
+| -------- | ---------- | ------------- |
+| Admin    | `admin`    | `admin123`    |
+| Customer | `customer` | `customer123` |
 
 **Change both passwords before putting this anywhere real.**
 
@@ -63,9 +68,14 @@ Sign in and sign out, with passwords stored as bcrypt hashes
 (`password_hash`) and transparently re-hashed on sign-in when PHP's default cost
 changes. Sessions store only a user id; the account is re-read on every request,
 so deactivating or demoting somebody takes effect immediately. Login failures
-return one generic message so the form cannot be used to discover which email
-addresses are registered, and the session id is regenerated on sign-in to
-prevent session fixation.
+return one generic message, and take about the same time, so the form cannot be
+used to discover which usernames exist. The session id is regenerated on
+sign-in to prevent session fixation.
+
+Accounts are identified by a **username**, not an email address - the system
+stores no email addresses anywhere, on accounts or on orders. Usernames allow
+letters, numbers, underscores and dashes, and the column collation is
+case-insensitive, so `Admin` and `admin` cannot both exist.
 
 ### Storefront
 **The storefront is private.** Browsing, the cart and checkout all require a
@@ -187,19 +197,19 @@ is ignored, so the API can never mint an administrator. Admin accounts remain
 something only an existing admin can create, in the web back office.
 
 ```json
-{ "name": "Mobile Mary", "email": "mary@example.com", "password": "phone12345",
+{ "name": "Mobile Mary", "username": "mary_m", "password": "phone12345",
   "phone": "090-7777-8888", "address": "12 App Street", "device": "Pixel 8" }
 ```
 
-`name`, `email` and `password` (min 8) are required; `phone`, `address` and
-`device` are optional. `device` labels the token so a user can later be shown
-their sessions. Returns **201** with a token, as below — the app does not need
+`name`, `username` (3-60 chars, letters/numbers/underscore/dash) and `password`
+(min 8) are required; `phone`, `address` and `device` are optional. `device`
+labels the token so a user can later be shown their sessions. Returns **201** with a token, as below — the app does not need
 to call login after registering.
 
 #### `POST /auth/login`
 
 ```json
-{ "email": "customer@jinjong.test", "password": "customer123", "device": "Pixel 8" }
+{ "username": "customer", "password": "customer123", "device": "Pixel 8" }
 ```
 
 **200**:
@@ -208,14 +218,14 @@ to call login after registering.
 { "success": true, "data": {
     "token": "3f679b34…",
     "expires_at": "2026-09-22 16:28:47",
-    "user": { "id": 2, "name": "Demo Customer", "email": "customer@jinjong.test",
+    "user": { "id": 2, "name": "Demo Customer", "username": "customer",
               "role": "customer", "phone": "080-1111-2222", "address": "1-2-3 Shibuya, Tokyo" }
 } }
 ```
 
-A wrong password, an unknown address and a disabled account all return the same
+A wrong password, an unknown username and a disabled account all return the same
 **401** and take about the same time, so the endpoint cannot be used to discover
-which addresses are registered.
+which usernames exist.
 
 #### `POST /auth/logout`
 
@@ -242,7 +252,8 @@ Worth adding before this is exposed beyond a local network:
 - **Rate limiting on login and register.** Nothing currently slows down
   credential stuffing or bulk account creation.
 - **HTTPS.** Bearer tokens are only as private as the transport.
-- **Password reset**, which needs mail configured.
+- **Account recovery.** With no email address on file there is no self-service
+  password reset; a locked-out user needs an admin to set a new password.
 
 ## Layout
 
@@ -260,7 +271,7 @@ application/
 	views/
 		layouts/         public.php, admin.php
 		...
-	database/          schema.sql, seed.sql
+	database/          schema.sql, seed.sql, upgrade-username.sql
 assets/              css, js and the product-image placeholder
 uploads/products/    uploaded product images (not tracked in git)
 ```
@@ -268,7 +279,7 @@ uploads/products/    uploaded product images (not tracked in git)
 Controllers extend one of three base classes in
 `application/core/MY_Controller.php`, which is where access control lives:
 
-- `Public_Controller` — open to everyone; only sign-in and registration
+- `Public_Controller` — open to everyone; only signing in and out
 - `Customer_Controller` — requires a signed-in user: the whole storefront,
   cart, checkout and account pages. Adds the cart badge
 - `Admin_Controller` — requires the `admin` role, renders the admin layout

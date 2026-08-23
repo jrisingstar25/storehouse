@@ -42,15 +42,15 @@ class Authentication {
 	 *
 	 * @return array|false The user record on success, FALSE otherwise
 	 */
-	public function verify($email, $password)
+	public function verify($username, $password)
 	{
-		$user = $this->CI->user_model->get_by_email($email);
+		$user = $this->CI->user_model->get_by_username($username);
 
 		if ( ! $user)
 		{
 			// Hash something anyway so a missing account costs about as much
 			// time as a wrong password, and the response time does not reveal
-			// which addresses are registered.
+			// which usernames are taken.
 			password_verify($password, self::DUMMY_HASH);
 
 			return FALSE;
@@ -82,9 +82,9 @@ class Authentication {
 	 *
 	 * @return array|false The user record on success, FALSE otherwise
 	 */
-	public function login($email, $password)
+	public function login($username, $password)
 	{
-		$user = $this->verify($email, $password);
+		$user = $this->verify($username, $password);
 
 		if ( ! $user)
 		{

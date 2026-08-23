@@ -37,7 +37,7 @@ class Users extends Admin_Controller {
 			{
 				$this->user_model->insert(array(
 					'name'      => $this->input->post('name', TRUE),
-					'email'     => $this->input->post('email', TRUE),
+					'username'  => $this->input->post('username', TRUE),
 					'password'  => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
 					'role'      => $this->input->post('role', TRUE),
 					'phone'     => $this->input->post('phone', TRUE),
@@ -77,7 +77,7 @@ class Users extends Admin_Controller {
 			{
 				$fields = array(
 					'name'    => $this->input->post('name', TRUE),
-					'email'   => $this->input->post('email', TRUE),
+					'username' => $this->input->post('username', TRUE),
 					'phone'   => $this->input->post('phone', TRUE),
 					'address' => $this->input->post('address', TRUE),
 				);
@@ -169,8 +169,8 @@ class Users extends Admin_Controller {
 	{
 		$this->form_validation->set_rules('name', 'Name', 'required|trim|min_length[2]|max_length[100]');
 		$this->form_validation->set_rules(
-			'email', 'Email',
-			'required|trim|valid_email|max_length[150]|callback_unique_email[' . (int) $ignore_id . ']'
+			'username', 'Username',
+			'required|trim|min_length[3]|max_length[60]|alpha_dash|callback_unique_username[' . (int) $ignore_id . ']'
 		);
 		$this->form_validation->set_rules('role', 'Role', 'required|in_list[customer,admin]');
 		$this->form_validation->set_rules('phone', 'Phone', 'trim|max_length[30]');
@@ -178,13 +178,13 @@ class Users extends Admin_Controller {
 	}
 
 	/** Validation callback; $ignore_id of 0 means "no row to skip". */
-	public function unique_email($email, $ignore_id)
+	public function unique_username($username, $ignore_id)
 	{
 		$ignore_id = (int) $ignore_id ?: NULL;
 
-		if ($this->user_model->email_exists($email, $ignore_id))
+		if ($this->user_model->username_exists($username, $ignore_id))
 		{
-			$this->form_validation->set_message('unique_email', 'That email is already registered.');
+			$this->form_validation->set_message('unique_username', 'That username is already taken.');
 
 			return FALSE;
 		}

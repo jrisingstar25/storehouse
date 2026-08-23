@@ -10,9 +10,9 @@ class User_model extends CI_Model {
 		return $this->db->get_where($this->table, array('id' => (int) $id))->row_array();
 	}
 
-	public function get_by_email($email)
+	public function get_by_username($username)
 	{
-		return $this->db->get_where($this->table, array('email' => $email))->row_array();
+		return $this->db->get_where($this->table, array('username' => $username))->row_array();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class User_model extends CI_Model {
 		{
 			$this->db->group_start()
 				->like('name', $filters['search'])
-				->or_like('email', $filters['search'])
+				->or_like('username', $filters['search'])
 				->group_end();
 		}
 
@@ -75,12 +75,15 @@ class User_model extends CI_Model {
 	}
 
 	/**
-	 * Uniqueness check for the email column, optionally ignoring one row
-	 * so an edit form can keep its own address.
+	 * Uniqueness check for the username column, optionally ignoring one row
+	 * so an edit form can keep its own name.
+	 *
+	 * The column collation is case-insensitive, so "Admin" collides with
+	 * "admin" - deliberately, to keep look-alike accounts from existing.
 	 */
-	public function email_exists($email, $ignore_id = NULL)
+	public function username_exists($username, $ignore_id = NULL)
 	{
-		$this->db->where('email', $email);
+		$this->db->where('username', $username);
 
 		if ($ignore_id !== NULL)
 		{

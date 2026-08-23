@@ -138,7 +138,6 @@ class Order_model extends CI_Model {
 			$this->db->group_start()
 				->like('order_number', $filters['search'])
 				->or_like('customer_name', $filters['search'])
-				->or_like('customer_email', $filters['search'])
 				->group_end();
 		}
 	}

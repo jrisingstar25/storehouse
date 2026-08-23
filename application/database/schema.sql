@@ -14,7 +14,7 @@ USE `jinjong`;
 CREATE TABLE IF NOT EXISTS `users` (
 	`id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`name`       VARCHAR(100) NOT NULL,
-	`email`      VARCHAR(150) NOT NULL,
+	`username`   VARCHAR(60)  NOT NULL,
 	`password`   VARCHAR(255) NOT NULL,
 	`role`       ENUM('customer','admin') NOT NULL DEFAULT 'customer',
 	`phone`      VARCHAR(30)  DEFAULT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 	`created_at` DATETIME     NOT NULL,
 	`updated_at` DATETIME     DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `users_email_unique` (`email`)
+	UNIQUE KEY `users_username_unique` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------
@@ -71,7 +71,6 @@ CREATE TABLE IF NOT EXISTS `orders` (
 	`order_number`     VARCHAR(30) NOT NULL,
 	`user_id`          INT UNSIGNED DEFAULT NULL,
 	`customer_name`    VARCHAR(100) NOT NULL,
-	`customer_email`   VARCHAR(150) NOT NULL,
 	`customer_phone`   VARCHAR(30) DEFAULT NULL,
 	`shipping_address` TEXT NOT NULL,
 	`notes`            TEXT DEFAULT NULL,

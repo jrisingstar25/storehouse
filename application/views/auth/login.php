@@ -6,9 +6,9 @@
 			<div class="card-body">
 				<?= form_open('login') ?>
 					<div class="mb-3">
-						<label class="form-label" for="email">Email</label>
-						<input type="email" class="form-control" id="email" name="email"
-							value="<?= set_value('email') ?>" required autofocus>
+						<label class="form-label" for="username">Username</label>
+						<input type="text" class="form-control" id="username" name="username"
+							value="<?= set_value('username') ?>" autocomplete="username" required autofocus>
 					</div>
 
 					<div class="mb-3">

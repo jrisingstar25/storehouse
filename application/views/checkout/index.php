@@ -14,14 +14,7 @@
 						</div>
 
 						<div class="col-sm-6 mb-3">
-							<label class="form-label" for="customer_email">Email</label>
-							<input type="email" class="form-control" id="customer_email" name="customer_email"
-								value="<?= set_value('customer_email', $user['email']) ?>" required>
-						</div>
-					</div>
-
-					<div class="mb-3">
-						<label class="form-label" for="customer_phone">Phone <span class="text-muted">(optional)</span></label>
+							<label class="form-label" for="customer_phone">Phone <span class="text-muted">(optional)</span></label>
 						<input type="text" class="form-control" id="customer_phone" name="customer_phone"
 							value="<?= set_value('customer_phone', $user['phone']) ?>">
 					</div>
@@ -58,7 +51,7 @@
 							value="bank_transfer" <?= $method === 'bank_transfer' ? 'checked' : '' ?>>
 						<label class="form-check-label" for="pay_bank">
 							Bank transfer
-							<span class="d-block small text-muted">We email transfer details once the order is confirmed.</span>
+							<span class="d-block small text-muted">Transfer details appear on your order once it is confirmed.</span>
 						</label>
 					</div>
 				</div>

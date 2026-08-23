@@ -87,7 +87,6 @@
 			<div class="card-header bg-white fw-semibold">Customer</div>
 			<div class="card-body small">
 				<div class="fw-semibold"><?= e($order['customer_name']) ?></div>
-				<div><?= e($order['customer_email']) ?></div>
 				<?php if ($order['customer_phone']): ?><div><?= e($order['customer_phone']) ?></div><?php endif ?>
 
 				<?php if ($customer): ?>

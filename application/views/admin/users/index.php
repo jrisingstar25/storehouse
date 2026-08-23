@@ -9,7 +9,7 @@
 			<div class="col-md-5">
 				<label class="form-label small" for="q">Search</label>
 				<input type="search" class="form-control form-control-sm" id="q" name="q"
-					value="<?= e($filters['search']) ?>" placeholder="Name or email">
+					value="<?= e($filters['search']) ?>" placeholder="Name or username">
 			</div>
 
 			<div class="col-md-3">
@@ -43,7 +43,7 @@
 				<thead class="table-light">
 					<tr>
 						<th scope="col">Name</th>
-						<th scope="col">Email</th>
+						<th scope="col">Username</th>
 						<th scope="col">Role</th>
 						<th scope="col">Status</th>
 						<th scope="col">Joined</th>
@@ -60,7 +60,7 @@
 									<span class="badge bg-light text-muted">you</span>
 								<?php endif ?>
 							</td>
-							<td class="small"><?= e($user['email']) ?></td>
+							<td class="small"><code><?= e($user['username']) ?></code></td>
 							<td>
 								<span class="badge bg-<?= $user['role'] === 'admin' ? 'dark' : 'light text-dark' ?>">
 									<?= e($user['role']) ?>

@@ -11,7 +11,7 @@
 			<div class="col-md-5">
 				<label class="form-label small" for="q">Search</label>
 				<input type="search" class="form-control form-control-sm" id="q" name="q"
-					value="<?= e($filters['search']) ?>" placeholder="Order number, customer name or email">
+					value="<?= e($filters['search']) ?>" placeholder="Order number or customer name">
 			</div>
 
 			<div class="col-md-3">
@@ -65,7 +65,9 @@
 							</td>
 							<td class="small">
 								<?= e($order['customer_name']) ?>
-								<div class="text-muted"><?= e($order['customer_email']) ?></div>
+								<?php if ($order['customer_phone']): ?>
+									<div class="text-muted"><?= e($order['customer_phone']) ?></div>
+								<?php endif ?>
 							</td>
 							<td class="small"><?= date('j M Y, H:i', strtotime($order['created_at'])) ?></td>
 							<td class="small"><?= $order['payment_method'] === 'cod' ? 'Cash on delivery' : 'Bank transfer' ?></td>

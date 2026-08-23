@@ -19,13 +19,13 @@ class Auth extends Public_Controller {
 
 		if ($this->input->method() === 'post')
 		{
-			$this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email');
+			$this->form_validation->set_rules('username', 'Username', 'required|trim');
 			$this->form_validation->set_rules('password', 'Password', 'required');
 
 			if ($this->form_validation->run())
 			{
 				$user = $this->auth->login(
-					$this->input->post('email', TRUE),
+					$this->input->post('username', TRUE),
 					$this->input->post('password')
 				);
 
@@ -40,7 +40,7 @@ class Auth extends Public_Controller {
 					$this->flash_redirect($destination, 'success', 'Welcome back, ' . e($user['name']) . '.');
 				}
 
-				// One generic message: never reveal whether the email exists.
+				// One generic message: never reveal whether the username exists.
 				$this->data['error'] = 'Those credentials do not match our records.';
 			}
 		}

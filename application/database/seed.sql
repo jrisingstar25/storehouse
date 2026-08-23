@@ -3,17 +3,17 @@
 -- Import after schema.sql:  mysql -u root < application/database/seed.sql
 --
 -- Accounts created here:
---   admin@jinjong.test    / admin123     (admin)
---   customer@jinjong.test / customer123  (customer)
+--   admin    / admin123     (admin)
+--   customer / customer123  (customer)
 -- CHANGE THESE PASSWORDS BEFORE ANY REAL DEPLOYMENT.
 -- ---------------------------------------------------------------------
 
 USE `jinjong`;
 
-INSERT INTO `users` (`name`, `email`, `password`, `role`, `phone`, `address`, `is_active`, `created_at`) VALUES
-('Site Administrator', 'admin@jinjong.test', '$2y$10$/lh.Poxvsz.cWYYSIpDUVukvsroNNU4UsuSQHIcBJtSm442bnI7eS', 'admin', '080-0000-0000', 'HQ', 1, NOW()),
-('Demo Customer', 'customer@jinjong.test', '$2y$10$/xHTW1k/RFF34Dosv8YmF.a8OXeL7rqWd4BIEFt24ZXieZq1PIWfO', 'customer', '080-1111-2222', '1-2-3 Shibuya, Tokyo', 1, NOW())
-ON DUPLICATE KEY UPDATE `email` = VALUES(`email`);
+INSERT INTO `users` (`name`, `username`, `password`, `role`, `phone`, `address`, `is_active`, `created_at`) VALUES
+('Site Administrator', 'admin',    '$2y$10$bOshpURqPw8oGziPsFhRdOtKLlQrxjGh.0.NBRyp3pgVOr5XXQpGa', 'admin',    '080-0000-0000', 'HQ', 1, NOW()),
+('Demo Customer',      'customer', '$2y$10$dKValp0X5WyGUeqrqKjxYu1usQYmqqBHvWKN00Q70c1dgMG8SW.yu',  'customer', '080-1111-2222', '1-2-3 Shibuya, Tokyo', 1, NOW())
+ON DUPLICATE KEY UPDATE `username` = VALUES(`username`);
 
 INSERT INTO `categories` (`name`, `slug`, `description`, `created_at`) VALUES
 ('Apparel',     'apparel',     'Shirts, jackets and everyday wear.', NOW()),

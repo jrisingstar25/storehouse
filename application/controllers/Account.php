@@ -19,8 +19,8 @@ class Account extends Customer_Controller {
 		{
 			$this->form_validation->set_rules('name', 'Name', 'required|trim|min_length[2]|max_length[100]');
 			$this->form_validation->set_rules(
-				'email', 'Email',
-				'required|trim|valid_email|max_length[150]|callback_unique_email[' . $user['id'] . ']'
+				'username', 'Username',
+				'required|trim|min_length[3]|max_length[60]|alpha_dash|callback_unique_username[' . $user['id'] . ']'
 			);
 			$this->form_validation->set_rules('phone', 'Phone', 'trim|max_length[30]');
 			$this->form_validation->set_rules('address', 'Address', 'trim');
@@ -41,7 +41,7 @@ class Account extends Customer_Controller {
 			{
 				$fields = array(
 					'name'    => $this->input->post('name', TRUE),
-					'email'   => $this->input->post('email', TRUE),
+					'username' => $this->input->post('username', TRUE),
 					'phone'   => $this->input->post('phone', TRUE),
 					'address' => $this->input->post('address', TRUE),
 				);
@@ -66,12 +66,12 @@ class Account extends Customer_Controller {
 		$this->render('account/index', array('user' => $user));
 	}
 
-	/** Validation callback: email must be free, ignoring this user's own row. */
-	public function unique_email($email, $user_id)
+	/** Validation callback: username must be free, ignoring this user's own row. */
+	public function unique_username($username, $user_id)
 	{
-		if ($this->user_model->email_exists($email, (int) $user_id))
+		if ($this->user_model->username_exists($username, (int) $user_id))
 		{
-			$this->form_validation->set_message('unique_email', 'That email is already registered.');
+			$this->form_validation->set_message('unique_username', 'That username is already taken.');
 
 			return FALSE;
 		}
