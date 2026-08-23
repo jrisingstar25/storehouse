@@ -68,19 +68,6 @@ class Authentication {
 		return $user;
 	}
 
-	/**
-	 * Create a customer account. Returns the new user id.
-	 *
-	 * @return int
-	 */
-	public function register(array $fields)
-	{
-		$fields['password'] = password_hash($fields['password'], PASSWORD_DEFAULT);
-		$fields['role']     = 'customer';
-
-		return $this->CI->user_model->insert($fields);
-	}
-
 	/** Destroy the identity but keep the session (so flash data survives). */
 	public function logout()
 	{

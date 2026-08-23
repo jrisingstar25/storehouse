@@ -88,8 +88,9 @@ class MY_Controller extends CI_Controller {
 }
 
 /**
- * Open to everyone. Only the sign-in and registration pages sit here -
- * the storefront itself requires an account (see Customer_Controller).
+ * Open to everyone. Only signing in and out sit here - the storefront itself
+ * requires an account (see Customer_Controller), and there is no public
+ * sign-up: accounts are created by an admin under /admin/users.
  */
 class Public_Controller extends MY_Controller {
 

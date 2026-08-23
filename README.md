@@ -28,8 +28,8 @@ dashboard, product CRUD, and a shopping cart with checkout.
    `http://localhost/jinjong/`.
 
 4. Open <http://localhost/jinjong/>. The site opens on the sign-in page - the
-   shop is only visible to signed-in users, so register or use a demo account
-   below.
+   shop is only visible to signed-in users, and there is no public sign-up, so
+   sign in with a demo account below.
 
 ### Demo accounts
 
@@ -59,7 +59,7 @@ Old `index.php/...` links keep working, so existing bookmarks do not break.
 ## What is included
 
 ### Authentication
-Registration, sign in and sign out, with passwords stored as bcrypt hashes
+Sign in and sign out, with passwords stored as bcrypt hashes
 (`password_hash`) and transparently re-hashed on sign-in when PHP's default cost
 changes. Sessions store only a user id; the account is re-read on every request,
 so deactivating or demoting somebody takes effect immediately. Login failures
@@ -70,8 +70,9 @@ prevent session fixation.
 ### Storefront
 **The storefront is private.** Browsing, the cart and checkout all require a
 signed-in account; an anonymous visitor is sent to the sign-in page and
-returned to whatever they asked for once they sign in. Registration is open, so
-a new customer can create an account and start shopping immediately.
+returned to whatever they asked for once they sign in. There is no public
+sign-up - every account, customer or admin, is created by an admin under
+**Admin -> Users**.
 
 Product catalogue with category filtering, search, sorting and pagination;
 product detail pages with related items and live stock status. Inactive products
@@ -127,9 +128,16 @@ orders; best sellers; and a low-stock list.
   in place and simply uncategorises them.
 - **Orders** — browse, filter, view, change status, delete. Cancelling an order
   returns its items to stock, exactly once.
-- **Users** — create, edit, delete, role and activation control. An admin cannot
-  remove their own admin access or delete their own account. Deleting a user
-  keeps their past orders, which simply lose their account link.
+- **Users** — create, edit, delete, role and activation control. This is the
+  only way accounts come into existence, for customers and admins alike: set
+  **Role** to *Admin* on the new-user form to create another administrator.
+
+  An admin cannot remove their own admin access or delete their own account,
+  and the last admin account cannot be removed. Because the admin performing
+  any change is always an active admin and cannot target themselves, at least
+  one active admin always survives - the system cannot be locked out of its
+  own admin area. Deleting a user keeps their past orders, which simply lose
+  their account link.
 
 ## Layout
 
