@@ -71,6 +71,7 @@ class Auth extends Public_Controller {
 		// hints and the client-side warnings cannot drift from the real limits.
 		$this->load->library('doctor_documents');
 		$form = array(
+			'page_scripts' => array(base_url('assets/js/register.js')),
 			'doc_max_kb' => Doctor_documents::MAX_SIZE_KB,
 			'doc_types'  => explode('|', Doctor_documents::ALLOWED_TYPES),
 		);

@@ -6,6 +6,11 @@
 	<title><?= e($title) ?> &middot; Jinjong</title>
 	<link href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
 	<link href="<?= base_url('assets/css/app.css') ?>" rel="stylesheet">
+
+	<?php // Per-page stylesheets, supplied by the controller. ?>
+	<?php foreach ((array) (isset($page_styles) ? $page_styles : array()) as $href): ?>
+		<link href="<?= $href ?>" rel="stylesheet">
+	<?php endforeach ?>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
@@ -86,7 +91,7 @@
 
 <script>
 // CSRF names the front end needs. The cookie is not HttpOnly, so the script
-// can always recover the current token from it - see assets/js/app.js.
+// can always recover the current token from it - see assets/js/shop.js.
 window.JINJONG = {
 	csrfField : <?= json_encode($this->security->get_csrf_token_name()) ?>,
 	csrfCookie: <?= json_encode(config_item('cookie_prefix') . config_item('csrf_cookie_name')) ?>
@@ -94,6 +99,10 @@ window.JINJONG = {
 </script>
 <script src="<?= base_url('assets/vendor/jquery/jquery.min.js') ?>"></script>
 <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
-<script src="<?= base_url('assets/js/app.js') ?>"></script>
+
+<?php // Per-page scripts, supplied by the controller. ?>
+<?php foreach ((array) (isset($page_scripts) ? $page_scripts : array()) as $src): ?>
+	<script src="<?= $src ?>"></script>
+<?php endforeach ?>
 </body>
 </html>

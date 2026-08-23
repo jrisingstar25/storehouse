@@ -76,6 +76,7 @@ class Shop extends Customer_Controller {
 		$this->pagination->initialize($this->pagination_config($base, $total));
 
 		$this->render('shop/index', array(
+			'page_scripts'    => array(base_url('assets/js/shop.js')),
 			'products'        => $this->product_model->get_all($filters, self::PER_PAGE, $offset),
 			'categories'      => $this->category_model->get_all_with_counts(),
 			'active_category' => $category,
@@ -148,6 +149,7 @@ class Shop extends Customer_Controller {
 		$this->data['title'] = $product['name'];
 
 		$this->render('shop/product', array(
+			'page_scripts' => array(base_url('assets/js/shop.js')),
 			'product' => $product,
 			'related' => $related,
 		));

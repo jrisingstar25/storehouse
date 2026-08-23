@@ -38,7 +38,7 @@ $account_type = set_value('account_type', 'customer');
 			<?php
 			// Rendered visible: with JavaScript off the inputs must still be
 			// reachable, and the server only requires them when account_type
-			// is "doctor". app.js collapses this when Customer is selected.
+			// is "doctor". register.js collapses this when Customer is selected.
 			?>
 			<div class="card shadow-sm mb-4" id="doctor-documents">
 				<div class="card-header bg-white fw-semibold">Supporting documents</div>
@@ -64,7 +64,7 @@ $account_type = set_value('account_type', 'customer');
 									data-preview="#<?= $field ?>-preview"
 									data-max-kb="<?= (int) $doc_max_kb ?>">
 
-								<?php // Filled in by app.js once a file is chosen. ?>
+								<?php // Filled in by register.js once a file is chosen. ?>
 								<div class="document-preview mt-2" id="<?= $field ?>-preview" hidden>
 									<div class="document-preview-frame position-relative">
 										<img alt="Preview of the <?= strtolower($label) ?> you selected"

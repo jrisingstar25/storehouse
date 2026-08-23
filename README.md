@@ -351,11 +351,29 @@ application/
 	database/          schema.sql, seed.sql, upgrade-username.sql,
 	                   upgrade-doctor-role.sql
 assets/              css, js and the product-image placeholder
+	js/              one file per view - see below
 	vendor/          Bootstrap, jQuery and Fancybox, served locally
 	                 (see assets/vendor/README.md for versions and sources)
 uploads/products/    uploaded product images (not tracked in git)
 uploads/doctor_documents/  applicant diplomas - no direct HTTP access
 ```
+
+### JavaScript
+
+There is no global bundle. Each script covers one view and is pulled in by
+the controller that renders it, through the `page_scripts` slot both layouts
+expose (`page_styles` too, for stylesheets):
+
+| File                       | Loaded by                              |
+| -------------------------- | -------------------------------------- |
+| `assets/js/shop.js`        | `Shop::index`, `::category`, `::product` - background add-to-cart |
+| `assets/js/register.js`    | `Auth::register` - account-type toggle and document previews |
+| `assets/js/admin-documents.js` | `Admin\Doctors::view` - Fancybox lightbox |
+
+Pages that need no behaviour - sign-in, cart, checkout, the account pages,
+most of the admin - load no application JavaScript at all. Adding a script
+means creating the file and naming it in the controller's render() call;
+nothing has to be registered globally.
 
 Controllers extend one of three base classes in
 `application/core/MY_Controller.php`, which is where access control lives:
