@@ -70,7 +70,7 @@ $route['register'] = 'auth/register';
  * ---------------------------------------------------------------- */
 $route['shop']                 = 'shop/index';
 $route['category/(:any)']      = 'shop/category/$1';
-$route['product/(:any)']       = 'shop/product/$1';
+$route['product/(:num)']       = 'shop/product/$1';
 
 /* -------------------------------------------------------------------
  * Cart & checkout

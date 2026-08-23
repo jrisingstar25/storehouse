@@ -82,13 +82,13 @@
 		<?php foreach ($related as $item): ?>
 			<div class="col-6 col-md-3">
 				<div class="card h-100 shadow-sm product-card">
-					<a href="<?= site_url('product/' . $item['slug']) ?>">
+					<a href="<?= site_url('product/' . (int) $item['id']) ?>">
 						<img src="<?= product_image_url($item['image']) ?>" alt="<?= e($item['name']) ?>"
 							class="card-img-top" loading="lazy">
 					</a>
 					<div class="card-body">
 						<h3 class="h6 card-title mb-1">
-							<a class="text-decoration-none link-dark" href="<?= site_url('product/' . $item['slug']) ?>">
+							<a class="text-decoration-none link-dark" href="<?= site_url('product/' . (int) $item['id']) ?>">
 								<?= e($item['name']) ?>
 							</a>
 						</h3>

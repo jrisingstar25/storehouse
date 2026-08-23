@@ -23,12 +23,12 @@
 					<?php foreach ($lines as $line): ?>
 						<tr>
 							<td style="width: 80px;">
-								<a href="<?= site_url('product/' . $line['slug']) ?>">
+								<a href="<?= site_url('product/' . (int) $line['product_id']) ?>">
 									<img src="<?= product_image_url($line['image']) ?>" alt="<?= e($line['name']) ?>" class="cart-thumb">
 								</a>
 							</td>
 							<td>
-								<a class="text-decoration-none link-dark fw-semibold" href="<?= site_url('product/' . $line['slug']) ?>">
+								<a class="text-decoration-none link-dark fw-semibold" href="<?= site_url('product/' . (int) $line['product_id']) ?>">
 									<?= e($line['name']) ?>
 								</a>
 								<?php if ($line['over_stock']): ?>

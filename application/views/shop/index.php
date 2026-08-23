@@ -63,7 +63,7 @@
 				<?php foreach ($products as $product): ?>
 					<div class="col-sm-6 col-xl-4">
 						<div class="card h-100 shadow-sm product-card">
-							<a href="<?= site_url('product/' . $product['slug']) ?>">
+							<a href="<?= site_url('product/' . (int) $product['id']) ?>">
 								<img src="<?= product_image_url($product['image']) ?>" alt="<?= e($product['name']) ?>"
 									class="card-img-top" loading="lazy">
 							</a>
@@ -73,7 +73,7 @@
 								<?php endif ?>
 
 								<h2 class="h6 card-title mt-1">
-									<a class="text-decoration-none link-dark" href="<?= site_url('product/' . $product['slug']) ?>">
+									<a class="text-decoration-none link-dark" href="<?= site_url('product/' . (int) $product['id']) ?>">
 										<?= e($product['name']) ?>
 									</a>
 								</h2>

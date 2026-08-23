@@ -20,13 +20,6 @@ class Product_model extends CI_Model {
 		return $this->db->where('p.id', (int) $id)->get()->row_array();
 	}
 
-	public function get_by_slug($slug)
-	{
-		$this->base_select();
-
-		return $this->db->where('p.slug', $slug)->get()->row_array();
-	}
-
 	/**
 	 * @param array $filters search, category_id, is_active, in_stock, sort
 	 */
@@ -113,32 +106,6 @@ class Product_model extends CI_Model {
 	public function delete($id)
 	{
 		return $this->db->delete($this->table, array('id' => (int) $id));
-	}
-
-	public function slug_exists($slug, $ignore_id = NULL)
-	{
-		$this->db->where('slug', $slug);
-
-		if ($ignore_id !== NULL)
-		{
-			$this->db->where('id !=', (int) $ignore_id);
-		}
-
-		return $this->db->count_all_results($this->table) > 0;
-	}
-
-	public function unique_slug($name, $ignore_id = NULL)
-	{
-		$base = slugify($name);
-		$slug = $base;
-		$i    = 2;
-
-		while ($this->slug_exists($slug, $ignore_id))
-		{
-			$slug = $base . '-' . $i++;
-		}
-
-		return $slug;
 	}
 
 	/**

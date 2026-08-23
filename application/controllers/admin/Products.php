@@ -77,7 +77,6 @@ class Products extends Admin_Controller {
 			$id = $this->product_model->insert(array(
 				'category_id' => $this->input->post('category_id') ?: NULL,
 				'name'        => $name,
-				'slug'        => $this->product_model->unique_slug($this->slug_source($name)),
 				'sku'         => $this->input->post('sku', TRUE),
 				'description' => $this->input->post('description', TRUE),
 				'price'       => (float) $this->input->post('price'),
@@ -117,7 +116,6 @@ class Products extends Admin_Controller {
 			$fields = array(
 				'category_id' => $this->input->post('category_id') ?: NULL,
 				'name'        => $name,
-				'slug'        => $this->product_model->unique_slug($this->slug_source($name), $product['id']),
 				'sku'         => $this->input->post('sku', TRUE),
 				'description' => $this->input->post('description', TRUE),
 				'price'       => (float) $this->input->post('price'),
@@ -204,7 +202,6 @@ class Products extends Admin_Controller {
 	protected function validate()
 	{
 		$this->form_validation->set_rules('name', 'Name', 'required|trim|min_length[2]|max_length[180]');
-		$this->form_validation->set_rules('slug', 'Slug', 'trim|max_length[200]');
 		$this->form_validation->set_rules('sku', 'SKU', 'trim|max_length[60]');
 		$this->form_validation->set_rules('price', 'Price', 'required|numeric|greater_than_equal_to[0]');
 		$this->form_validation->set_rules('stock', 'Stock', 'required|integer|greater_than_equal_to[0]');
@@ -212,14 +209,6 @@ class Products extends Admin_Controller {
 		$this->form_validation->set_rules('description', 'Description', 'trim');
 
 		return $this->form_validation->run();
-	}
-
-	/** Use the slug the admin typed, if any, otherwise derive from the name. */
-	protected function slug_source($name)
-	{
-		$slug = trim((string) $this->input->post('slug', TRUE));
-
-		return $slug !== '' ? $slug : $name;
 	}
 
 	/**

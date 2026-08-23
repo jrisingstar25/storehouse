@@ -20,20 +20,10 @@
 							value="<?= set_value('name', $editing ? $product['name'] : '') ?>" required autofocus>
 					</div>
 
-					<div class="row">
-						<div class="col-sm-8 mb-3">
-							<label class="form-label" for="slug">URL slug</label>
-							<input type="text" class="form-control" id="slug" name="slug"
-								value="<?= set_value('slug', $editing ? $product['slug'] : '') ?>"
-								placeholder="Generated from the name if left blank">
-							<div class="form-text">Must be unique; a number is appended if it is already taken.</div>
-						</div>
-
-						<div class="col-sm-4 mb-3">
-							<label class="form-label" for="sku">SKU</label>
-							<input type="text" class="form-control" id="sku" name="sku"
-								value="<?= set_value('sku', $editing ? $product['sku'] : '') ?>">
-						</div>
+					<div class="mb-3">
+						<label class="form-label" for="sku">SKU</label>
+						<input type="text" class="form-control" id="sku" name="sku"
+							value="<?= set_value('sku', $editing ? $product['sku'] : '') ?>">
 					</div>
 
 					<div class="mb-0">

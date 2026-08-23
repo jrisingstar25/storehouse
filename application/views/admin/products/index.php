@@ -103,7 +103,7 @@
 							</td>
 							<td class="text-end text-nowrap">
 								<a class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener"
-									href="<?= site_url('product/' . $product['slug']) ?>">View</a>
+									href="<?= site_url('product/' . (int) $product['id']) ?>">View</a>
 								<a class="btn btn-sm btn-outline-dark"
 									href="<?= site_url('admin/products/edit/' . (int) $product['id']) ?>">Edit</a>
 								<?= form_open('admin/products/delete/' . (int) $product['id'], array(

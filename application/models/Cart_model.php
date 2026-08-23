@@ -157,7 +157,7 @@ class Cart_model extends CI_Model {
 	/**
 	 * Hydrated cart lines.
 	 *
-	 * @return array List of {product_id, name, slug, image, price, qty,
+	 * @return array List of {product_id, name, image, price, qty,
 	 *               stock, subtotal, over_stock}
 	 */
 	public function contents()
@@ -203,7 +203,6 @@ class Cart_model extends CI_Model {
 			$lines[] = array(
 				'product_id' => $id,
 				'name'       => $product['name'],
-				'slug'       => $product['slug'],
 				'image'      => $product['image'],
 				'price'      => $price,
 				'qty'        => $qty,

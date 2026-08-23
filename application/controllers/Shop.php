@@ -119,9 +119,9 @@ class Shop extends Customer_Controller {
 	}
 
 	/** Product detail page. */
-	public function product($slug)
+	public function product($id)
 	{
-		$product = $this->product_model->get_by_slug($slug);
+		$product = $this->product_model->get($id);
 
 		// Inactive products are hidden from the storefront but stay visible
 		// to admins so they can preview before publishing.

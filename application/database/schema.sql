@@ -47,7 +47,6 @@ CREATE TABLE IF NOT EXISTS `products` (
 	`id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`category_id` INT UNSIGNED DEFAULT NULL,
 	`name`        VARCHAR(180) NOT NULL,
-	`slug`        VARCHAR(200) NOT NULL,
 	`sku`         VARCHAR(60)  DEFAULT NULL,
 	`description` TEXT         DEFAULT NULL,
 	`price`       DECIMAL(12,2) NOT NULL DEFAULT 0.00,
@@ -57,7 +56,6 @@ CREATE TABLE IF NOT EXISTS `products` (
 	`created_at`  DATETIME NOT NULL,
 	`updated_at`  DATETIME DEFAULT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE KEY `products_slug_unique` (`slug`),
 	KEY `products_category_id` (`category_id`),
 	CONSTRAINT `products_category_fk` FOREIGN KEY (`category_id`)
 		REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE

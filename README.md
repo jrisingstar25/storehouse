@@ -21,11 +21,12 @@ dashboard, product CRUD, and a shopping cart with checkout.
    The seed step is optional but gives you three categories, nine products and
    the two accounts below.
 
-   Upgrading an existing database? Two one-off scripts live alongside:
+   Upgrading an existing database? Three one-off scripts live alongside:
    `upgrade-username.sql` (accounts moved from email to username - read its
    header, it explains how addresses are converted and where they can collide)
-   and `upgrade-doctor-role.sql` (adds the doctor role and its applications
-   table).
+   `upgrade-doctor-role.sql` (adds the doctor role and its applications
+   table) and `upgrade-product-id-urls.sql` (drops products.slug now that
+   product URLs carry the id).
 
 2. **Check the credentials** in `application/config/database.php`. They default
    to the XAMPP standard (`root`, no password, database `jinjong`).
@@ -221,6 +222,11 @@ orders; best sellers; and a low-stock list.
 ### Admin CRUD
 - **Products** — create, edit, delete, active/inactive toggle, image upload with
   filtering by search, category, status and sort order.
+
+  Products are addressed by id: `/product/{id}`. Renaming one therefore never
+  changes its URL, and two products may share a name. Categories still use a
+  slug (`/category/{slug}`).
+
 - **Categories** — create, edit, delete. Deleting a category leaves its products
   in place and simply uncategorises them.
 - **Orders** — browse, filter, view, change status, delete. Cancelling an order
@@ -363,7 +369,7 @@ application/
 		layouts/         public.php, admin.php
 		...
 	database/          schema.sql, seed.sql, upgrade-username.sql,
-	                   upgrade-doctor-role.sql
+	                   upgrade-doctor-role.sql, upgrade-product-id-urls.sql
 assets/              css, js and the product-image placeholder
 	js/              one file per view - see below
 	vendor/          Bootstrap, jQuery and Fancybox, served locally
