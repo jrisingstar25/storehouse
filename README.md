@@ -1,0 +1,153 @@
+# Jinjong
+
+A small e-commerce application on CodeIgniter 3.1.9: customer accounts, an admin
+dashboard, product CRUD, and a shopping cart with checkout.
+
+## Requirements
+
+- PHP 7.3+ with `mysqli` and `gd`
+- MySQL / MariaDB
+- Apache (the project is written for XAMPP at `htdocs/jinjong`)
+
+## Setup
+
+1. **Create the database.** From the project root:
+
+   ```
+   mysql -u root < application/database/schema.sql
+   mysql -u root < application/database/seed.sql
+   ```
+
+   The seed step is optional but gives you three categories, nine products and
+   the two accounts below.
+
+2. **Check the credentials** in `application/config/database.php`. They default
+   to the XAMPP standard (`root`, no password, database `jinjong`).
+
+3. **Check the base URL** in `application/config/config.php`. It is set to
+   `http://localhost/jinjong/`.
+
+4. Open <http://localhost/jinjong/>. The site opens on the sign-in page - the
+   shop is only visible to signed-in users, so register or use a demo account
+   below.
+
+### Demo accounts
+
+| Role     | Email                   | Password      |
+| -------- | ----------------------- | ------------- |
+| Admin    | `admin@jinjong.test`    | `admin123`    |
+| Customer | `customer@jinjong.test` | `customer123` |
+
+**Change both passwords before putting this anywhere real.**
+
+### Clean URLs
+
+URLs are clean (`/jinjong/shop`, not `/jinjong/index.php/shop`). This is done by
+the `.htaccess` in the project root, which routes anything that is not a real
+file through `index.php`, together with `$config['index_page'] = '';`. It needs
+`mod_rewrite`, which XAMPP enables by default.
+
+Two things to know if you move the project:
+
+- `RewriteBase` in `.htaccess` and `$config['base_url']` both hard-code
+  `/jinjong/`. Change both if you rename or relocate the folder.
+- If `mod_rewrite` is ever unavailable, set `$config['index_page']` back to
+  `'index.php'`. The site works either way; only the URLs change.
+
+Old `index.php/...` links keep working, so existing bookmarks do not break.
+
+## What is included
+
+### Authentication
+Registration, sign in and sign out, with passwords stored as bcrypt hashes
+(`password_hash`) and transparently re-hashed on sign-in when PHP's default cost
+changes. Sessions store only a user id; the account is re-read on every request,
+so deactivating or demoting somebody takes effect immediately. Login failures
+return one generic message so the form cannot be used to discover which email
+addresses are registered, and the session id is regenerated on sign-in to
+prevent session fixation.
+
+### Storefront
+**The storefront is private.** Browsing, the cart and checkout all require a
+signed-in account; an anonymous visitor is sent to the sign-in page and
+returned to whatever they asked for once they sign in. Registration is open, so
+a new customer can create an account and start shopping immediately.
+
+Product catalogue with category filtering, search, sorting and pagination;
+product detail pages with related items and live stock status. Inactive products
+are hidden from customers but remain viewable by admins for previewing.
+
+### Shopping cart
+Session-backed cart holding only `product_id => qty`. Names, prices, stock and
+availability are re-read from the database on every access, so the cart can
+never show a stale price, and a product that is deleted or delisted is dropped
+from the cart with a notice rather than silently changing the total. Quantities
+are clamped to available stock on add and on update.
+
+### Checkout
+Prefilled from the signed-in account. Flat
+shipping of &yen;600, free over &yen;15,000. Placing an order writes the order
+and its lines inside a transaction and decrements stock with a
+`WHERE stock >= qty` guard, so two people racing for the last unit cannot both
+succeed — the loser's order rolls back whole. Each order line snapshots the
+product name and price, so order history stays readable after a product is
+edited or deleted.
+
+### Customer account
+Profile and password editing, plus order history. Customers can only open their
+own orders.
+
+### Admin dashboard
+Revenue, order, product and customer totals; a 14-day revenue chart; recent
+orders; best sellers; and a low-stock list.
+
+### Admin CRUD
+- **Products** — create, edit, delete, active/inactive toggle, image upload with
+  filtering by search, category, status and sort order.
+- **Categories** — create, edit, delete. Deleting a category leaves its products
+  in place and simply uncategorises them.
+- **Orders** — browse, filter, view, change status, delete. Cancelling an order
+  returns its items to stock, exactly once.
+- **Users** — create, edit, delete, role and activation control. An admin cannot
+  remove their own admin access or delete their own account. Deleting a user
+  keeps their past orders, which simply lose their account link.
+
+## Layout
+
+```
+application/
+	config/            routes, database, autoload, app config
+	controllers/       Shop, Cart, Checkout, Auth, Account
+		admin/           Dashboard, Products, Categories, Orders, Users
+	core/              MY_Controller and the Public/Customer/Admin base classes
+	libraries/         Authentication.php (reachable as $this->auth)
+	models/            User, Category, Product, Cart, Order
+	helpers/           shop_helper.php (money, slugify, escaping, statuses)
+	views/
+		layouts/         public.php, admin.php
+		...
+	database/          schema.sql, seed.sql
+assets/              css and the product-image placeholder
+uploads/products/    uploaded product images (not tracked in git)
+```
+
+Controllers extend one of three base classes in
+`application/core/MY_Controller.php`, which is where access control lives:
+
+- `Public_Controller` — open to everyone; only sign-in and registration
+- `Customer_Controller` — requires a signed-in user: the whole storefront,
+  cart, checkout and account pages. Adds the cart badge
+- `Admin_Controller` — requires the `admin` role, renders the admin layout
+
+## Notes on security
+
+- CSRF protection is enabled globally; every state-changing action is a POST
+  submitted through `form_open()`.
+- All state-changing admin endpoints (delete, toggle, status) reject GET.
+- Output is escaped with the `e()` helper; queries go through the query builder
+  or bound parameters.
+- Uploads are restricted by type and size, stored under randomised filenames,
+  and `uploads/.htaccess` refuses to serve anything executable from that folder.
+- The library is named `Authentication`, not `Auth`, because CodeIgniter loads
+  libraries and controllers into the same global namespace and the `Auth`
+  controller would collide with it.

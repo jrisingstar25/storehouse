@@ -49,6 +49,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
-$route['default_controller'] = 'welcome';
-$route['404_override'] = '';
+// The storefront is private, so an anonymous visitor lands on the sign-in
+// page. Auth::login() forwards anyone already signed in to the shop (or to
+// the dashboard, for an admin).
+$route['default_controller'] = 'auth/login';
+$route['404_override']       = '';
 $route['translate_uri_dashes'] = FALSE;
+
+/* -------------------------------------------------------------------
+ * Authentication
+ * ---------------------------------------------------------------- */
+$route['login']    = 'auth/login';
+$route['logout']   = 'auth/logout';
+$route['register'] = 'auth/register';
+
+/* -------------------------------------------------------------------
+ * Storefront
+ * ---------------------------------------------------------------- */
+$route['shop']                 = 'shop/index';
+$route['category/(:any)']      = 'shop/category/$1';
+$route['product/(:any)']       = 'shop/product/$1';
+
+/* -------------------------------------------------------------------
+ * Cart & checkout
+ * ---------------------------------------------------------------- */
+$route['cart']                 = 'cart/index';
+$route['checkout']             = 'checkout/index';
+
+/* -------------------------------------------------------------------
+ * Customer account
+ * ---------------------------------------------------------------- */
+$route['account']              = 'account/index';
+$route['account/orders']       = 'account/orders';
+$route['account/orders/(:num)'] = 'account/order/$1';
+
+/* -------------------------------------------------------------------
+ * Admin  (controllers live in application/controllers/admin/)
+ * ---------------------------------------------------------------- */
+$route['admin'] = 'admin/dashboard/index';

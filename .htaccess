@@ -1,0 +1,23 @@
+# Clean URLs.
+#
+# Routes every request that is not a real file or directory through
+# index.php, which lets $config['index_page'] be '' so generated links carry
+# no index.php. This needs mod_rewrite (enabled by default in XAMPP).
+#
+# RewriteBase must match the URL path the project is served from. It is
+# /jinjong/ here because the project lives in htdocs/jinjong; change it if you
+# move or rename the folder, and change $config['base_url'] to match.
+#
+# If mod_rewrite is ever unavailable, the site still works: set
+# $config['index_page'] back to 'index.php' and URLs revert to the
+# index.php/controller form.
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /jinjong/
+
+	# Leave real files and directories alone (assets, uploads, ...).
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>

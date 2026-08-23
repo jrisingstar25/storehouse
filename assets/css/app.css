@@ -1,0 +1,37 @@
+/* Jinjong - small layer on top of Bootstrap. */
+
+.admin-body   { background: #f6f7f9; }
+.admin-sidebar { background: #fff; min-height: calc(100vh - 56px); }
+
+.product-card img,
+.product-thumb {
+	object-fit: cover;
+	background: #f1f3f5;
+}
+
+.product-card img { height: 220px; width: 100%; }
+.product-thumb    { height: 48px; width: 48px; border-radius: .25rem; }
+
+.product-hero {
+	width: 100%;
+	max-height: 460px;
+	object-fit: cover;
+	background: #f1f3f5;
+	border-radius: .5rem;
+}
+
+.cart-thumb { height: 64px; width: 64px; object-fit: cover; border-radius: .25rem; background: #f1f3f5; }
+
+.stat-card .stat-value { font-size: 1.75rem; font-weight: 600; line-height: 1.1; }
+.stat-card .stat-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* Sparkline-style bar chart on the dashboard. */
+.revenue-chart { display: flex; align-items: flex-end; gap: 4px; height: 120px; }
+.revenue-chart .bar {
+	flex: 1 1 0;
+	min-height: 2px;
+	background: #0d6efd;
+	border-radius: 2px 2px 0 0;
+	opacity: .85;
+}
+.revenue-chart .bar:hover { opacity: 1; }

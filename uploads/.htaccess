@@ -1,0 +1,7 @@
+# Serve uploads as inert files only - no PHP execution under any circumstance.
+<IfModule mod_php7.c>
+	php_flag engine off
+</IfModule>
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|pl|py|cgi|shtml)$">
+	Require all denied
+</FilesMatch>
