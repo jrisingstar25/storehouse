@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+// CodeIgniter only auto-loads this one file from application/core, so the
+// mobile API base class is pulled in from here.
+require_once APPPATH . 'core/API_Controller.php';
+
 /**
  * Base controller shared by every controller in the application.
  *
@@ -18,6 +22,10 @@ class MY_Controller extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+
+		// Every web page needs it; the API base class deliberately does not.
+		// Must come before auth->user(), which reads the session.
+		$this->load->library('session');
 
 		$this->data['title']       = 'Jinjong';
 		$this->data['current_user'] = $this->auth->user();

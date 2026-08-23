@@ -453,7 +453,10 @@ $config['csrf_token_name'] = 'csrf_test_name';
 $config['csrf_cookie_name'] = 'csrf_cookie_name';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array();
+// The mobile API authenticates with a bearer token, not the session
+// cookie, so a forged cross-site request has nothing to ride on and the
+// CSRF token would only be an obstacle to legitimate clients.
+$config['csrf_exclude_uris'] = array('api(/.*)?');
 
 /*
 |--------------------------------------------------------------------------

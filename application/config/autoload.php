@@ -58,7 +58,10 @@ $autoload['packages'] = array();
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-$autoload['libraries'] = array('database', 'session', 'form_validation', 'authentication' => 'auth');
+// The session is deliberately NOT autoloaded: the mobile API is stateless
+// and would otherwise write a session file and set a cookie on every call.
+// MY_Controller loads it for the web side.
+$autoload['libraries'] = array('database', 'form_validation', 'authentication' => 'auth');
 
 /*
 | -------------------------------------------------------------------

@@ -109,3 +109,24 @@ CREATE TABLE IF NOT EXISTS `order_items` (
 	CONSTRAINT `order_items_product_fk` FOREIGN KEY (`product_id`)
 		REFERENCES `products` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- api_tokens  (bearer tokens for the mobile API)
+--
+-- Only a SHA-256 of the token is stored. The plaintext is shown once, at
+-- issue; a leaked database therefore hands over no usable sessions.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `api_tokens` (
+	`id`           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`user_id`      INT UNSIGNED NOT NULL,
+	`token_hash`   CHAR(64) NOT NULL,
+	`device`       VARCHAR(120) DEFAULT NULL,
+	`last_used_at` DATETIME DEFAULT NULL,
+	`expires_at`   DATETIME DEFAULT NULL,
+	`created_at`   DATETIME NOT NULL,
+	PRIMARY KEY (`id`),
+	UNIQUE KEY `api_tokens_hash_unique` (`token_hash`),
+	KEY `api_tokens_user_id` (`user_id`),
+	CONSTRAINT `api_tokens_user_fk` FOREIGN KEY (`user_id`)
+		REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

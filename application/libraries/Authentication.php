@@ -25,6 +25,9 @@ class Authentication {
 
 	const SESSION_KEY = 'auth_user_id';
 
+	/** A valid bcrypt hash no password matches, used to even out timing. */
+	const DUMMY_HASH = '$2y$10$C6UzMDM.H6dfI/f/IKcEe.3Ptk3s8vEbwUvKfLuBUKZQwCEFmvbSy';
+
 	public function __construct()
 	{
 		$this->CI =& get_instance();
@@ -32,15 +35,28 @@ class Authentication {
 	}
 
 	/**
-	 * Verify credentials and start a session.
+	 * Check a set of credentials without touching the session.
+	 *
+	 * Shared by the web sign-in form and the mobile API, so both apply the
+	 * same rules about inactive accounts and password re-hashing.
 	 *
 	 * @return array|false The user record on success, FALSE otherwise
 	 */
-	public function login($email, $password)
+	public function verify($email, $password)
 	{
 		$user = $this->CI->user_model->get_by_email($email);
 
-		if ( ! $user OR ! password_verify($password, $user['password']))
+		if ( ! $user)
+		{
+			// Hash something anyway so a missing account costs about as much
+			// time as a wrong password, and the response time does not reveal
+			// which addresses are registered.
+			password_verify($password, self::DUMMY_HASH);
+
+			return FALSE;
+		}
+
+		if ( ! password_verify($password, $user['password']))
 		{
 			return FALSE;
 		}
@@ -56,6 +72,23 @@ class Authentication {
 			$this->CI->user_model->update($user['id'], array(
 				'password' => password_hash($password, PASSWORD_DEFAULT),
 			));
+		}
+
+		return $user;
+	}
+
+	/**
+	 * Verify credentials and start a web session.
+	 *
+	 * @return array|false The user record on success, FALSE otherwise
+	 */
+	public function login($email, $password)
+	{
+		$user = $this->verify($email, $password);
+
+		if ( ! $user)
+		{
+			return FALSE;
 		}
 
 		// New session id on privilege change guards against session fixation.

@@ -139,6 +139,111 @@ orders; best sellers; and a low-stock list.
   own admin area. Deleting a user keeps their past orders, which simply lose
   their account link.
 
+## Mobile API
+
+A JSON API for the mobile app.
+
+Base URL: `http://localhost/jinjong/api`
+
+The paths carry no version segment. If a future change has to break the
+contract, it will need either a version prefix introduced then or additive-only
+changes, since apps already installed will keep calling these paths.
+
+### Conventions
+
+Requests may send a JSON body (`Content-Type: application/json`) or ordinary
+form encoding. Every response is JSON in one of two shapes:
+
+```json
+{ "success": true,  "data": { ... } }
+{ "success": false, "message": "...", "errors": { "field": "why" } }
+```
+
+`errors` appears only on validation failures (422). Status codes used: 200, 201,
+400, 401, 404, 405, 422.
+
+### Authentication
+
+Endpoints other than login and register expect a bearer token:
+
+```
+Authorization: Bearer <token>
+```
+
+Tokens are **not** the web session — the API sets no cookies and writes no
+session files. They last 30 days, and only a SHA-256 of each one is stored, so
+a dump of `api_tokens` cannot be replayed. The plaintext is returned once, at
+issue.
+
+A token stops working the moment its account is deactivated or deleted, and
+expired rows are removed as they are encountered.
+
+### Endpoints
+
+#### `POST /auth/register`
+
+Self-service sign-up. **The role is always `customer`** — posting `role=admin`
+is ignored, so the API can never mint an administrator. Admin accounts remain
+something only an existing admin can create, in the web back office.
+
+```json
+{ "name": "Mobile Mary", "email": "mary@example.com", "password": "phone12345",
+  "phone": "090-7777-8888", "address": "12 App Street", "device": "Pixel 8" }
+```
+
+`name`, `email` and `password` (min 8) are required; `phone`, `address` and
+`device` are optional. `device` labels the token so a user can later be shown
+their sessions. Returns **201** with a token, as below — the app does not need
+to call login after registering.
+
+#### `POST /auth/login`
+
+```json
+{ "email": "customer@jinjong.test", "password": "customer123", "device": "Pixel 8" }
+```
+
+**200**:
+
+```json
+{ "success": true, "data": {
+    "token": "3f679b34…",
+    "expires_at": "2026-09-22 16:28:47",
+    "user": { "id": 2, "name": "Demo Customer", "email": "customer@jinjong.test",
+              "role": "customer", "phone": "080-1111-2222", "address": "1-2-3 Shibuya, Tokyo" }
+} }
+```
+
+A wrong password, an unknown address and a disabled account all return the same
+**401** and take about the same time, so the endpoint cannot be used to discover
+which addresses are registered.
+
+#### `POST /auth/logout`
+
+Requires a token. Revokes the calling token. Send `{"all_devices": true}` to
+revoke every token the user holds.
+
+#### `GET /auth/me`
+
+Requires a token. Returns the account behind it — also the cheapest way for an
+app to check on launch whether its stored token is still good.
+
+### A note on CSRF
+
+`api` and everything under it is listed in `$config['csrf_exclude_uris']`. That is safe precisely
+because the API authenticates with a header the caller must know rather than a
+cookie the browser attaches automatically: there is no ambient credential for a
+forged cross-site request to ride on. The web side keeps full CSRF protection —
+posting to `/login` or `/cart/add` without a token is still rejected.
+
+### Not built yet
+
+Worth adding before this is exposed beyond a local network:
+
+- **Rate limiting on login and register.** Nothing currently slows down
+  credential stuffing or bulk account creation.
+- **HTTPS.** Bearer tokens are only as private as the transport.
+- **Password reset**, which needs mail configured.
+
 ## Layout
 
 ```
@@ -146,9 +251,11 @@ application/
 	config/            routes, database, autoload, app config
 	controllers/       Shop, Cart, Checkout, Auth, Account
 		admin/           Dashboard, Products, Categories, Orders, Users
-	core/              MY_Controller and the Public/Customer/Admin base classes
+		api/             Auth (mobile API), Fallback
+	core/              MY_Controller (Public/Customer/Admin bases) and
+	                   API_Controller (JSON + bearer tokens)
 	libraries/         Authentication.php (reachable as $this->auth)
-	models/            User, Category, Product, Cart, Order
+	models/            User, Category, Product, Cart, Order, Api_token
 	helpers/           shop_helper.php (money, slugify, escaping, statuses)
 	views/
 		layouts/         public.php, admin.php

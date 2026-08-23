@@ -88,3 +88,24 @@ $route['account/orders/(:num)'] = 'account/order/$1';
  * Admin  (controllers live in application/controllers/admin/)
  * ---------------------------------------------------------------- */
 $route['admin'] = 'admin/dashboard/index';
+
+/* -------------------------------------------------------------------
+ * Mobile API (controllers live in application/controllers/api/)
+ *
+ * Bearer-token authenticated, never the web session - see
+ * application/core/API_Controller.php.
+ *
+ * The routes below look like identity mappings, and they are: they exist to
+ * claim each real endpoint before the catch-all further down, which would
+ * otherwise swallow them into the 404 handler.
+ * ---------------------------------------------------------------- */
+$route['api/auth/register'] = 'api/auth/register';
+$route['api/auth/login']    = 'api/auth/login';
+$route['api/auth/logout']   = 'api/auth/logout';
+$route['api/auth/me']       = 'api/auth/me';
+
+// Anything else under the API prefix is a JSON 404, not an HTML error page.
+// A real regex, not (:any): CodeIgniter expands (:any) to [^/]+, which stops
+// at the first slash and so would miss api/auth/typo.
+$route['api']      = 'api/fallback/index';
+$route['api/(.+)'] = 'api/fallback/index';
