@@ -35,3 +35,14 @@
 	opacity: .85;
 }
 .revenue-chart .bar:hover { opacity: 1; }
+
+/* Doctor application documents: uniform thumbnails, obvious they are clickable. */
+.document-thumb {
+	width: 100%;
+	max-height: 260px;
+	object-fit: contain;
+	background: #f8f9fa;
+	cursor: zoom-in;
+	transition: opacity .15s ease-in-out;
+}
+.document-thumb:hover { opacity: .85; }

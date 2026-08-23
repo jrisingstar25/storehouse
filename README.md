@@ -108,6 +108,15 @@ Admins can also set the role directly on the user form, without an application.
 
 #### The uploaded documents
 
+On the review page the two documents open in a Fancybox lightbox - click to
+zoom, drag to pan, and rotate for the scans that arrive sideways. The anchors
+still point at the streaming route, so with the CDN blocked they simply open
+the document in a new tab. Fancybox is loaded only on that page, through the
+`page_styles` / `page_scripts` slots the admin layout exposes.
+
+Note Fancybox is GPLv3 for open-source use and needs a commercial licence
+otherwise - worth checking before this ships commercially.
+
 Diplomas are personal records, so they are **not** stored like product images.
 `uploads/doctor_documents/` denies direct HTTP access outright; the only way to
 see a document is `admin/doctors/document/{id}/{diploma|graduation}`, which sits

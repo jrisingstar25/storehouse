@@ -19,6 +19,11 @@ $nav = array(
 	<title><?= e($title) ?> &middot; Jinjong Admin</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="<?= base_url('assets/css/app.css') ?>" rel="stylesheet">
+
+	<?php // Per-page stylesheets, supplied by the controller. ?>
+	<?php foreach ((array) (isset($page_styles) ? $page_styles : array()) as $href): ?>
+		<link href="<?= $href ?>" rel="stylesheet">
+	<?php endforeach ?>
 </head>
 <body class="admin-body">
 
@@ -66,5 +71,10 @@ $nav = array(
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<?php // Per-page scripts, supplied by the controller. ?>
+<?php foreach ((array) (isset($page_scripts) ? $page_scripts : array()) as $src): ?>
+	<script src="<?= $src ?>"></script>
+<?php endforeach ?>
 </body>
 </html>

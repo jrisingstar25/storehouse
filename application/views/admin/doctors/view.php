@@ -34,12 +34,17 @@ $pending = $application['status'] === 'pending';
 						<div class="col-sm-6">
 							<div class="border rounded p-2 h-100">
 								<div class="small fw-semibold mb-2"><?= $label ?></div>
-								<a href="<?= site_url('admin/doctors/document/' . (int) $application['id'] . '/' . $type) ?>"
+								<?php $src = site_url('admin/doctors/document/' . (int) $application['id'] . '/' . $type) ?>
+								<?php
+								// target=_blank is the fallback: if Fancybox does not load,
+								// the link still opens the document in a new tab.
+								?>
+								<a href="<?= $src ?>" data-fancybox="documents"
+									data-caption="<?= e($label) ?> &mdash; <?= e($application['user_name']) ?>"
 									target="_blank" rel="noopener">
-									<img src="<?= site_url('admin/doctors/document/' . (int) $application['id'] . '/' . $type) ?>"
-										alt="<?= $label ?>" class="img-fluid rounded">
+									<img src="<?= $src ?>" alt="<?= e($label) ?>" class="img-fluid rounded document-thumb">
 								</a>
-								<div class="small text-muted mt-2">Click to open full size.</div>
+								<div class="small text-muted mt-2">Click to zoom.</div>
 							</div>
 						</div>
 					<?php endforeach ?>
