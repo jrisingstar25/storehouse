@@ -84,7 +84,7 @@
 									<?php if ((int) $product['stock'] < 1): ?>
 										<button class="btn btn-sm btn-outline-secondary w-100" disabled>Out of stock</button>
 									<?php else: ?>
-										<?= form_open('cart/add') ?>
+										<?= form_open('cart/add', array('data-ajax-cart' => '')) ?>
 											<input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
 											<input type="hidden" name="qty" value="1">
 											<input type="hidden" name="return_to" value="<?= e(uri_string()) ?>">

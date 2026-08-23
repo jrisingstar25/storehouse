@@ -78,6 +78,25 @@ product detail pages with related items and live stock status. Inactive products
 are hidden from customers but remain viewable by admins for previewing.
 
 ### Shopping cart
+**Add to cart happens in the background** — no page reload. The button posts
+with jQuery (`$.ajax`), the navbar counter updates in place, and the result
+appears as a toast. The forms are ordinary `<form>` elements, so with JavaScript disabled
+they submit normally and fall back to the old redirect.
+
+One wrinkle worth knowing about: CodeIgniter issues a new CSRF token every time
+it verifies a POST, including one it rejects. A token rendered into the page is
+therefore stale the moment anything posts — from this tab or another. The
+script reads the current token from its cookie immediately before each request
+and re-syncs every form on the page from the reply, so a catalogue page full of
+add-to-cart buttons keeps working, and a rejected request heals itself instead
+of leaving a dead button. Because the script always makes the submitted token
+match the cookie, this also means a CSRF rejection is now effectively
+unreachable from our own pages; the recovery path stays in for the case where
+the cookie is missing entirely. See `assets/js/app.js`.
+
+jQuery 3.7.1 is loaded from a CDN in `application/views/layouts/public.php`.
+Bootstrap 5 does not need it — it is there for this script.
+
 Session-backed cart holding only `product_id => qty`. Names, prices, stock and
 availability are re-read from the database on every access, so the cart can
 never show a stale price, and a product that is deleted or delisted is dropped
@@ -127,7 +146,7 @@ application/
 		layouts/         public.php, admin.php
 		...
 	database/          schema.sql, seed.sql
-assets/              css and the product-image placeholder
+assets/              css, js and the product-image placeholder
 uploads/products/    uploaded product images (not tracked in git)
 ```
 

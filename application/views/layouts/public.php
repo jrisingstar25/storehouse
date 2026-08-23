@@ -38,9 +38,8 @@
 					<li class="nav-item">
 						<a class="nav-link position-relative" href="<?= site_url('cart') ?>">
 							Cart
-							<?php if ($cart_count > 0): ?>
-								<span class="badge rounded-pill bg-warning text-dark"><?= (int) $cart_count ?></span>
-							<?php endif ?>
+							<span class="badge rounded-pill bg-warning text-dark" data-cart-count
+								<?= $cart_count > 0 ? '' : 'hidden' ?>><?= (int) $cart_count ?></span>
 						</a>
 					</li>
 				<?php endif ?>
@@ -82,6 +81,19 @@
 	</div>
 </footer>
 
+<!-- Background add-to-cart feedback lands here. -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+// CSRF names the front end needs. The cookie is not HttpOnly, so the script
+// can always recover the current token from it - see assets/js/app.js.
+window.JINJONG = {
+	csrfField : <?= json_encode($this->security->get_csrf_token_name()) ?>,
+	csrfCookie: <?= json_encode(config_item('cookie_prefix') . config_item('csrf_cookie_name')) ?>
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= base_url('assets/js/app.js') ?>"></script>
 </body>
 </html>

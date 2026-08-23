@@ -39,7 +39,12 @@ class Cart extends Customer_Controller {
 		));
 	}
 
-	/** POST target for "Add to cart" buttons. */
+	/**
+	 * POST target for "Add to cart" buttons.
+	 *
+	 * Answers JSON for a background request and redirects for a plain form
+	 * submission, so the button still works with JavaScript disabled.
+	 */
 	public function add()
 	{
 		if ($this->input->method() !== 'post')
@@ -50,6 +55,17 @@ class Cart extends Customer_Controller {
 		$product_id = (int) $this->input->post('product_id');
 		$qty        = (int) $this->input->post('qty');
 		$result     = $this->cart_model->add($product_id, $qty > 0 ? $qty : 1);
+
+		if ($this->input->is_ajax_request())
+		{
+			$this->json(array(
+				'ok'         => $result['ok'],
+				'message'    => $result['message'],
+				'cart_count' => $this->cart_model->count_items(),
+			));
+
+			return;
+		}
 
 		// Stay on the page the customer came from, if it was one of ours.
 		$return = $this->safe_return($this->input->post('return_to'));

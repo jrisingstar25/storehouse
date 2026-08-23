@@ -39,6 +39,41 @@ class MY_Controller extends CI_Controller {
 	}
 
 	/**
+	 * Send a JSON response and stop.
+	 *
+	 * Every JSON reply carries a fresh CSRF token. CodeIgniter rotates the
+	 * token on each POST it verifies, so without this the second background
+	 * request from a page would be rejected.
+	 *
+	 * @param array $payload
+	 * @param int   $status HTTP status code
+	 */
+	protected function json(array $payload, $status = 200)
+	{
+		$payload['csrf_name'] = $this->security->get_csrf_token_name();
+		$payload['csrf_hash'] = $this->security->get_csrf_hash();
+
+		$this->output
+			->set_status_header($status)
+			->set_content_type('application/json', 'utf-8')
+			->set_output(json_encode($payload));
+	}
+
+	/**
+	 * Send a JSON response immediately and end the request.
+	 *
+	 * Needed when replying from a constructor: CodeIgniter only flushes the
+	 * output buffer after the controller method runs, so exiting before that
+	 * would send an empty body.
+	 */
+	protected function json_exit(array $payload, $status = 200)
+	{
+		$this->json($payload, $status);
+		$this->output->_display();
+		exit;
+	}
+
+	/**
 	 * Flash a message and redirect. Types map to Bootstrap alert suffixes.
 	 *
 	 * @param string $url  Relative URL to redirect to
@@ -80,6 +115,17 @@ class Customer_Controller extends Public_Controller {
 
 		if ( ! $this->auth->logged_in())
 		{
+			// A background request must not be answered with the login page:
+			// say so in JSON and let the caller send the browser there.
+			if ($this->input->is_ajax_request())
+			{
+				$this->json_exit(array(
+					'ok'       => FALSE,
+					'message'  => 'Your session has ended. Please sign in again.',
+					'redirect' => site_url('login'),
+				), 401);
+			}
+
 			$this->session->set_userdata('redirect_after_login', uri_string());
 			$this->flash_redirect('login', 'warning', 'Please sign in to continue.');
 		}

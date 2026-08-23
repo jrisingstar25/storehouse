@@ -50,7 +50,7 @@
 		<?php endif ?>
 
 		<?php if ($stock > 0): ?>
-			<?= form_open('cart/add', array('class' => 'row g-2 align-items-end')) ?>
+			<?= form_open('cart/add', array('class' => 'row g-2 align-items-end', 'data-ajax-cart' => '')) ?>
 				<input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
 				<input type="hidden" name="return_to" value="<?= e(uri_string()) ?>">
 
